@@ -29,7 +29,7 @@ class Camera:
         else:
             self.res = res
         if focal_length == None:
-            self.focal_length = 0.1
+            self.focal_length = 0.001
         else:
             self.focal_length = focal_length
         if fov == None:
@@ -137,8 +137,8 @@ class Camera:
         if distance == None:
             color = (0, 0, 0)
         else:
-            #print(distance)
-            c = int((distance-10) / 35 * (255))
+            print(distance)
+            c = int((distance-1000) / 3500 * (255))
             color = (c, c, c)
         return color
 

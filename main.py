@@ -10,7 +10,7 @@ def main():
     porsche = Solid('data/cube.obj')
     world = {}
     world['porsche'] = porsche
-    camera = Camera(pos=(-1, -1.5, -1), rot=(-pi/4, pi/4), res=(320, 240))
+    camera = Camera(pos=(-1, -1.5, -1), rot=(-pi/4, pi/4), res=(240, 240))
     print('Rendering...')
     render(world, camera)
 

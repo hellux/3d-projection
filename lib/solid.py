@@ -38,7 +38,7 @@ class Solid:
             if len(segments) == 0: #skip if line is empty
                 continue
             if segments[0] == 'v':
-                #remove ̈́'v' segment and convert all to floats
+                #remove ̈́v segment and convert all to floats
                 vertices.append([float(coord) for coord in segments[1:]])
             elif segments[0] == 'f':
                 face = []
