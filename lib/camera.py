@@ -1,4 +1,5 @@
 from math import cos, sin, pi
+from time import time
 
 from lib.matrix import matrix_multiply, inverse
 from lib.vector import vector_add, vector_subtract, dot_product,\
@@ -37,6 +38,10 @@ class Camera:
         else:
             self.fov = fov
         self._calc_array_dimensions()
+        
+        #progress_bar
+        self.time_start = 0
+        self.time_eta = 0
 
     def _calc_array_dimensions(self):
         """calculate the relative width and height for the pixel array"""
@@ -99,6 +104,7 @@ class Camera:
         try:
             t = -(dot_product(N, S)-dot_product(N, T[0])) / dot_product(N, V)
         except ZeroDivisionError:
+            print('Triangle\'s plane is parallel to ray')
             return None
         #point where ray hits triangle's plane:
         P = vector_add(S, inner_product(t, V))
@@ -137,8 +143,7 @@ class Camera:
         if distance == None:
             color = (0, 0, 0)
         else:
-            print(distance)
-            c = int((distance-1000) / 3500 * (255))
+            c = int((distance-4000) / 4000 * (255))
             color = (c, c, c)
         return color
 
@@ -156,15 +161,34 @@ class Camera:
         """
         pixel_map = []
         for row in range(self.res[1]):
-            print('Calculating colors of pixels in row {}...'.format(row))
             pixel_row = []
             for col in range(self.res[0]):
+                self.print_progress_bar((row*self.res[0]+col)/self.res[0]/self.res[1])
                 color = self.calculate_pixel_color(col, row, world)
                 pixel_row.append(color)
             pixel_map.append(pixel_row)
 
-        print('Pixel map finished.')
+        print('\nPixel map finished.')
         return pixel_map
+
+    def print_progress_bar(self, progress):
+        if progress == 0:
+            self.time_start = time()
+            print('Rendering...', end='')
+        else:
+            self.time_elapsed = time() - self.time_start
+            self.time_eta = self.time_elapsed / progress - self.time_elapsed
+
+        string = 'Rendering... {}% {}s'.format(round(progress*100, 1),
+                                               int(self.time_eta))
+        progress_bar_total = 77-len(string)
+        progress_bar_current = int(progress*progress_bar_total)
+        progress_bar_remaining = progress_bar_total - progress_bar_current
+
+        print('\r{} [{}{}]'.format(string,
+                                   progress_bar_current*'#',
+                                   progress_bar_remaining*'-'),
+              end='')
 
 def test():
     cam1 = Camera()

@@ -56,11 +56,11 @@ class Solid:
         triangles = []
         for face in self.faces:
             T = self.get_vertices(face) #vertices t0, t1, t2
-            normal = Solid.get_plane_normal(T)
+            normal = Solid._calculate_plane_normal(T)
             triangles.append({'normal': normal, 'vertices': T})
         return triangles
 
-    def get_plane_normal(triangle_vertices):
+    def _calculate_plane_normal(triangle_vertices):
         """calculates and returns the normal for a plane that a triangle lies on"""
         return cross_product(
             vector_subtract(triangle_vertices[1], triangle_vertices[0]),
