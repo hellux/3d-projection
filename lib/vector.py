@@ -40,6 +40,7 @@ def dot_product(u, v):
             product_sum += u*n
     else:
         print('Dot product not calculated: invalid input')
+        print('u is of type {} and v is of type {}'.format(type(u), type(v)))
         return None
 
     return product_sum

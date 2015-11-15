@@ -1,9 +1,15 @@
+from lib.vector import vector_subtract, cross_product
+
 class Solid:
     """Stores vertices and faces for a geometric solid"""
     
     def __init__(self, file_path):
         file_object = open(file_path, 'r')
+        print('Parsing file at {}...'.format(file_path))
         self.vertices, self.faces = Solid._parse_obj_data(file_object)
+        self.triangles = self._create_triangles()
+        print('Finished, {} vertices and {} faces found'.format(len(self.vertices),
+                                                                len(self.faces)))
     
     @staticmethod
     def _parse_obj_data(file_object):
@@ -25,22 +31,47 @@ class Solid:
 
         while True:
             line = file_object.readline()
+            if len(line) == 0: #empty line means eof
+                break
             line = line[:line.find('#')] #remove comments
             segments = line.split() 
             if len(segments) == 0: #skip if line is empty
                 continue
             if segments[0] == 'v':
+                #remove ̈́'v' segment and convert all to floats
                 vertices.append([float(coord) for coord in segments[1:]])
             elif segments[0] == 'f':
                 face = []
-                indices = segments[1:]
+                indices = segments[1:] #remove 'f' segment
                 if len(indices) != 3:
                     print("Face is not a triangle")
                 for index in indices:
-                    face.append(int(index[:index.find('/')]))
+                    separate_indices = index.split('/')
+                    face.append(int(separate_indices[0]))
                 faces.append(face)
 
         return tuple(vertices), tuple(faces) #return as immutable tuples
+
+    def _create_triangles(self):
+        triangles = []
+        for face in self.faces:
+            T = self.get_vertices(face) #vertices t0, t1, t2
+            normal = Solid.get_plane_normal(T)
+            triangles.append({'normal': normal, 'vertices': T})
+        return triangles
+
+    def get_plane_normal(triangle_vertices):
+        """calculates and returns the normal for a plane that a triangle lies on"""
+        return cross_product(
+            vector_subtract(triangle_vertices[1], triangle_vertices[0]),
+            vector_subtract(triangle_vertices[2], triangle_vertices[0]))
+
+
+    def get_vertices(self, triangle):
+        vertices = []
+        for index in triangle:
+            vertices.append(self.vertices[index-1])
+        return tuple(vertices)
 
 def test():
     obj = Solid("data/911.obj")
