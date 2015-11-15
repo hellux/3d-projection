@@ -7,9 +7,9 @@ from lib.camera import Camera
 from math import pi
 
 def main():
-    porsche = Solid('data/cube_tri.obj')
+    item = Solid('data/cube_tri.obj')
     world = {}
-    world['porsche'] = porsche
+    world['item'] = item
     camera = Camera(pos=(-3.5, -4.8, -3.5),
                     rot=(-pi/4, pi/4),
                     res=(50, 50),
