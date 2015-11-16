@@ -1,7 +1,7 @@
 from math import cos, sin, pi
 from time import time
 
-from lib.matrix import matrix_multiply, inverse
+from lib.matrix import matrix_multiply
 from lib.vector import vector_add, vector_subtract, dot_product,\
                        cross_product, inner_product
 
@@ -100,7 +100,6 @@ class Camera:
         T = triangle['vertices']
         #normal for triangle's plane
         N = triangle['normal']
-        
         try:
             t = -(dot_product(N, S)-dot_product(N, T[0])) / dot_product(N, V)
         except ZeroDivisionError:
@@ -110,15 +109,13 @@ class Camera:
         P = vector_add(S, inner_product(t, V))
 
         R = vector_subtract(P, T[0])
-        Q1 = vector_subtract(T[1], T[0])
-        Q2 = vector_subtract(T[2], T[0])
+        Q = triangle['Q']
+        
+        M1 = triangle['M']
+        M2 = ((dot_product(R, Q[0]),),
+              (dot_product(R, Q[1]),))
 
-        M1 = ((dot_product(Q1, Q1), dot_product(Q1, Q2)),
-              (dot_product(Q1, Q2), dot_product(Q2, Q2)))
-        M2 = ((dot_product(R, Q1),),
-              (dot_product(R, Q2),))
-
-        w = matrix_multiply(inverse(M1), M2)
+        w = matrix_multiply(M1, M2)
         w = (1-w[0][0]-w[1][0], w[0][0], w[1][0])
 
         if all([i > 0 for i in w]) and t > 0:

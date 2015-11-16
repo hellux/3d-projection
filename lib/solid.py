@@ -1,4 +1,5 @@
-from lib.vector import vector_subtract, cross_product
+from lib.vector import vector_subtract, cross_product, dot_product
+from lib.matrix import inverse
 
 class Solid:
     """Stores vertices and faces for a geometric solid"""
@@ -51,21 +52,17 @@ class Solid:
                 faces.append(face)
 
         return tuple(vertices), tuple(faces) #return as immutable tuples
-
+    
     def _create_triangles(self):
         triangles = []
         for face in self.faces:
             T = self.get_vertices(face) #vertices t0, t1, t2
-            normal = Solid._calculate_plane_normal(T)
-            triangles.append({'normal': normal, 'vertices': T})
-        return triangles
-
-    def _calculate_plane_normal(triangle_vertices):
-        """calculates and returns the normal for a plane that a triangle lies on"""
-        return cross_product(
-            vector_subtract(triangle_vertices[1], triangle_vertices[0]),
-            vector_subtract(triangle_vertices[2], triangle_vertices[0]))
-
+            Q = (vector_subtract(T[1], T[0]), vector_subtract(T[2], T[0])) 
+            normal = cross_product(Q[0], Q[1])
+            M = inverse(((dot_product(Q[0], Q[0]), dot_product(Q[0], Q[1])),
+                         (dot_product(Q[0], Q[1]), dot_product(Q[1], Q[1]))))
+            triangles.append({'normal': normal, 'vertices': T, 'Q': Q, 'M': M})
+        return triangles    
 
     def get_vertices(self, triangle):
         vertices = []
