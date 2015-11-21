@@ -15,8 +15,8 @@ bool PRJ_slow;                      // should camera move slow
 double PRJ_COS[] = {1, 0};        // cosine of rotation for current frame
 double PRJ_SIN[] = {0, 1};        // sine of rotation for current frame
 
-void PRJ_loadObjFile( std::string obj_filename, double pos[], double ang[] ) {
-    std::ifstream input( obj_filename );
+void PRJ_loadObjFile(std::string obj_filename, double pos[], double ang[]) {
+    std::ifstream input(obj_filename);
     std::string line;
 
     SDL_Log("Loading file \"%s\"...", obj_filename.c_str());

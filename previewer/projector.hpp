@@ -11,7 +11,6 @@
 void PRJ_loadObjFile(std::string obj,
                      double pos[],
                      double ang[]);
-
 void PRJ_update(int fps);
 void PRJ_updateRotation(void);
 void PRJ_updatePosition(int fps);
