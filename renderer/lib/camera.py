@@ -3,7 +3,7 @@ from time import time
 
 from lib.matrix import matrix_multiply
 from lib.vector import vector_add, vector_subtract, dot_product,\
-                       cross_product, inner_product
+                       cross_product, inner_product, magnitude
 
 class Camera:
     """class for storing camera properties and calculating projection"""
@@ -37,13 +37,13 @@ class Camera:
             self.fov = 1.5
         else:
             self.fov = fov
-        self._calc_array_dimensions()
+        self._calculate_array_dimensions()
         
         #progress_bar
         self.time_start = 0
         self.time_eta = 0
 
-    def _calc_array_dimensions(self):
+    def _calculate_array_dimensions(self):
         """calculate the relative width and height for the pixel array"""
         width = self.focal_length * sin(self.fov/2)
         height = width * (self.res[1]/self.res[0])
@@ -62,10 +62,10 @@ class Camera:
         y = -self.array_size[1]/2 + (row+0.5)*pixel_size
         #z coordinate for all pixels
         z = self.focal_length
-        vector = Camera.rotate((x, y ,z), x=self.rot[0], y=self.rot[1])
+        vector = Camera._rotate((x, y ,z), x=self.rot[0], y=self.rot[1])
         return vector
 
-    def rotate(vertex, point=None, x=None, y=None, z=None):
+    def _rotate(vertex, point=None, x=None, y=None, z=None):
         """rotates a vertex around a point around any or all axes"""
         alpha, beta, gamma = x, y, z
         if point == None:
@@ -90,59 +90,56 @@ class Camera:
                                  (-sin(gamma),  cos(gamma), 0),
                                  (0,            0,          1))
             rotated_vertex = matrix_multiply(rotated_vertex, rotation_matrix_z)
-
         #return vertex translated to revolve around point:
         return  vector_add(rotated_vertex[0], point)
 
-    def distance_to_triangle(self, solid, triangle, V):
-        S = self.pos
-        #vertices for triangle T
-        T = triangle['vertices']
-        #normal for triangle's plane
-        N = triangle['normal']
+    def _calculate_ray_collision(self, solid, triangle, S, V):
+        """calculates at what point, if any, a ray hits a triangle
+        P(t) = S + tV
+        P is a point on the line / ray
+        S is the starting point of the ray
+        V is the direction vector for the line / ray
+        The value t represents where on the line point P is located.
+        t = 0 <-> point is in starting point
+        t < 0 <-> point is behind starting point
+        t > 0 <-> point is in front of starting point
+        """
+        T = triangle['vertices'] #vertices for triangle
+        N = triangle['normal'] #normal for triangle's plane
         try:
+            # D = -N*T[0] | signed distance from origin
+            # L = <N, D> | 4d plane vector
+            # t = - ( L*S ) / ( L*V ) = - ( N*S - N*T[0] ) / ( N*V )
             t = -(dot_product(N, S)-dot_product(N, T[0])) / dot_product(N, V)
+            # t = magnitude(vector_subtract(S, T[0])) / magnitude(V)
         except ZeroDivisionError:
-            print('Triangle\'s plane is parallel to ray')
+            print('Triangle\'s plane is parallel to ray, collision impossible')
             return None
         #point where ray hits triangle's plane:
         P = vector_add(S, inner_product(t, V))
-
         R = vector_subtract(P, T[0])
         Q = triangle['Q']
-        
         M1 = triangle['M']
         M2 = ((dot_product(R, Q[0]),),
               (dot_product(R, Q[1]),))
-
         w = matrix_multiply(M1, M2)
         w = (1-w[0][0]-w[1][0], w[0][0], w[1][0])
-
         if all([i > 0 for i in w]) and t > 0:
             #point P is inside triangle / ray  goes through triangle
             #triangle is in front camera if t > 0
-            #calculate distance similiar to Pythagoras:
-            return t
+            return P
         else:
             return None
 
-    def calculate_pixel_color(self, col, row, world):
-        distance = None
-        V = self._camera_vector(col, row) #P(t) = S + tV
+    def _calculate_pixel_distances(self, col, row, world):
+        distances = []
+        V = self._camera_vector(col, row)
         for key, solid in world.items():
             for triangle in solid.triangles:
-                d = self.distance_to_triangle(solid, triangle, V)
-                if d != None:
-                    if distance == None:
-                        distance = d
-                    elif d < distance:
-                        distance = d
-        if distance == None:
-            color = (0, 0, 0)
-        else:
-            c = int((distance-4000) / 4000 * (255))
-            color = (c, c, c)
-        return color
+                P = self._calculate_ray_collision(solid, triangle, self.pos, V)
+                if P != None:
+                    distances.append(magnitude(vector_subtract(P, self.pos)))
+        return distances
 
     def calculate_pixel_map(self, world):
         """creates a pixel map by checking the first triangle a every ray
@@ -160,15 +157,26 @@ class Camera:
         for row in range(self.res[1]):
             pixel_row = []
             for col in range(self.res[0]):
-                self.print_progress_bar((row*self.res[0]+col)/self.res[0]/self.res[1])
-                color = self.calculate_pixel_color(col, row, world)
+                self._print_progress_bar((row*self.res[0]+col)/self.res[0]/self.res[1])
+                distances = self._calculate_pixel_distances(col, row, world)
+                c = int(255 * (1 - 1/(len(distances)+1)))
+                color = (c, c, c)
                 pixel_row.append(color)
             pixel_map.append(pixel_row)
 
         print('\nPixel map finished.')
         return pixel_map
 
-    def print_progress_bar(self, progress):
+    def _print_progress_bar(self, progress):
+        def readable_time(seconds):
+            time_string = ''
+            if seconds > 3600:
+                time_string += '{}h'.format(int(seconds/3600))
+            if seconds > 60:
+                time_string += '{}m'.format(int((seconds%3600)/60))
+            time_string += '{}s'.format(int(seconds%60))
+            return time_string
+
         if progress == 0:
             self.time_start = time()
             print('Rendering...', end='')
@@ -176,8 +184,8 @@ class Camera:
             self.time_elapsed = time() - self.time_start
             self.time_eta = self.time_elapsed / progress - self.time_elapsed
 
-        string = 'Rendering... {}% {}s'.format(round(progress*100, 1),
-                                               int(self.time_eta))
+        string = 'Rendering... {}% {}'.format(round(progress*100, 1),
+                                               readable_time(self.time_eta))
         progress_bar_total = 77-len(string)
         progress_bar_current = int(progress*progress_bar_total)
         progress_bar_remaining = progress_bar_total - progress_bar_current

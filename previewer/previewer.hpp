@@ -1,10 +1,4 @@
-#include <iostream>
-#include <sstream>
-#include <math.h>
-#include <vector>
-
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
 
 void initWindow( void );
 void initProjector( void );

@@ -7,13 +7,13 @@ from lib.camera import Camera
 from math import pi
 
 def main():
-    item = Solid('data/porsche-911.obj')
+    item = Solid('../data/cube_tri.obj')
     world = {}
     world['item'] = item
-    camera = Camera(pos=(3.5, 3.5, 3.5),
-                    rot=(-pi/4, pi/4),
-                    res=(10, 10),
-                    fov=pi/2)
+    camera = Camera(pos=(-0.3, -0.3, -5),
+                    rot=(-pi/50, pi/50),
+                    res=(800, 600),
+                    fov=0.9*pi)
     render(world, camera)
 
 def render(world, camera, filepath=None):

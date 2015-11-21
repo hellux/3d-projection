@@ -55,6 +55,10 @@ def cross_product(u, v):
         print('Cross product not calculated: dimension mismatch')
         return None
 
+def magnitude(u):
+    """returns the magnitude (length) of vector u"""
+    return (u[0]**2 + u[1]**2 + u[2]**2)**0.5
+
 def test():
     n = 4
     u = (2, 1, 0)
@@ -102,6 +106,15 @@ def test():
     assert all([i > 0 for i in w])
 
     print('All tests ran successfully, no errors!')
+    
+
+    u = ( 1, 2, 3 )
+    v = ( 4, 5, 6 )
+    from time import time
+    start = time()
+    for i in range(1000000):
+        d = vector_subtract(u, v)
+    print(time() - start)
 
 if __name__ == '__main__':
     test()
