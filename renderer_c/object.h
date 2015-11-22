@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
 
 #include "vector.h"
@@ -30,23 +31,23 @@ struct Triangle {
 struct Object {
     struct Triangle* tris;   /* array of pointers to triangle structs */
     int tric;                /* amount of triangles */
-    int color[3];            /* rgb color */
+    uint8_t color[3];            /* rgb color */
     double brightness;       /* brigtness of object surface */
     double reflectiveness;   /* reflectiveness -||- */
 };
 
-void triangle_create(double vertices[][3], int indices[], struct Triangle* T);
+static void triangle_create(double vertices[][3],
+                            int indices[],
+                            struct Triangle* T);
 void object_create(char* obj_file_path,
                    double pos[],
-                   double rot[],
-                   int color[],
+                   uint8_t color[],
                    double brightness,
                    double reflectiveness,
                    struct Object* O);
-void _calc_center(int vertexc, double vertices[][3], double center[]);
-void _load_obj_file(char* file_path,
-                     int* vertexc, double vertices[][3],
-                     int* indexc, int indices[][3]);
-void _parse_line(char* line_buffer,
-                  int* vertexc, double vertices[][3],
-                  int* indexc, int indices[][3]);
+static void load_obj_file(char* file_path,
+                          int* vertexc, double vertices[][3],
+                          int* indexc, int indices[][3]);
+static void parse_line(char* line_buffer,
+                       int* vertexc, double vertices[][3],
+                       int* indexc, int indices[][3]);

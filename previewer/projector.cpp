@@ -7,15 +7,15 @@ double PRJ_velocity[] = {0, 0, 0};        // velocity of camera
 double PRJ_acceleration[] = {0, 0, 0};    // acceleration of camera
 
 double PRJ_objects[MAX_OBJECTS][MAX_VERTICES][3];   // list of object lists of vertices
-int PRJ_objectCount = 0;                            // amount of objects
-int PRJ_verticesCounts[MAX_OBJECTS];                // amount of vertices per object
+int PRJ_object_count = 0;                            // amount of objects
+int PRJ_vertices_counts[MAX_OBJECTS];                // amount of vertices per object
 
-bool PRJ_slow;                      // should camera move slow
+bool PRJ_slow;                  // should camera move slow
 
 double PRJ_COS[] = {1, 0};        // cosine of rotation for current frame
 double PRJ_SIN[] = {0, 1};        // sine of rotation for current frame
 
-void PRJ_loadObjFile(std::string obj_filename, double pos[], double ang[]) {
+void PRJ_load_obj_file(std::string obj_filename, double pos[], double ang[]) {
     std::ifstream input(obj_filename);
     std::string line;
 
@@ -35,15 +35,15 @@ void PRJ_loadObjFile(std::string obj_filename, double pos[], double ang[]) {
                 coords[i] = stod(line.substr(separator[i],
                             separator[i+1] - separator[i])) + pos[i];
             }
-            PRJ_objects[PRJ_objectCount][index][0] = coords[0];
-            PRJ_objects[PRJ_objectCount][index][1] = coords[1];
-            PRJ_objects[PRJ_objectCount][index][2] = coords[2];
+            PRJ_objects[PRJ_object_count][index][0] = coords[0];
+            PRJ_objects[PRJ_object_count][index][1] = coords[1];
+            PRJ_objects[PRJ_object_count][index][2] = coords[2];
             index++;
         }
     }
 
-    PRJ_verticesCounts[PRJ_objectCount] = index;
-    PRJ_objectCount++;
+    PRJ_vertices_counts[PRJ_object_count] = index;
+    PRJ_object_count++;
     SDL_Log("Vertex count for \"%s\": %d", obj_filename.c_str(), index);
 }
 
@@ -51,18 +51,18 @@ void PRJ_saveConfigFile() {
 }
 
 void PRJ_update(int fps) {
-    PRJ_updateRotation();
-    PRJ_updatePosition(fps);
+    PRJ_update_rotation();
+    PRJ_update_position(fps);
 }
 
-void PRJ_updateRotation() {
+void PRJ_update_rotation() {
     for (int i = 0; i < 2; i++) {
         PRJ_COS[i] = cos(PRJ_rotation[i]);
         PRJ_SIN[i] = sin(PRJ_rotation[i]);
     }
 }
 
-void PRJ_updatePosition(int fps) {
+void PRJ_update_position(int fps) {
     fps++;
     for (int i = 0; i < 3; i++) {
         PRJ_velocity[i] += PRJ_acceleration[i]/(fps);
@@ -72,31 +72,31 @@ void PRJ_updatePosition(int fps) {
 }
 
 void PRJ_render(SDL_Renderer* renderer, int res[]) {
-    for (int obj = 0; obj < PRJ_objectCount; obj++) {
-        PRJ_renderObject(renderer, obj, res);
+    for (int obj = 0; obj < PRJ_object_count; obj++) {
+        PRJ_render_object(renderer, obj, res);
     }
 }
 
-void PRJ_renderObject(SDL_Renderer* renderer,
+void PRJ_render_object(SDL_Renderer* renderer,
                       int obj,
                       int res[]) {
-    for (int p = 0; p < PRJ_verticesCounts[obj]; p++) {
-        PRJ_renderPoint(renderer, PRJ_objects[obj][p], res);
+    for (int p = 0; p < PRJ_vertices_counts[obj]; p++) {
+        PRJ_render_point(renderer, PRJ_objects[obj][p], res);
     }
 }
 
-void PRJ_renderPoint(SDL_Renderer* renderer,
+void PRJ_render_point(SDL_Renderer* renderer,
                      double vertex[],
                      int res[]) {
     int point_2d[2];
-    PRJ_transformPoint(point_2d,
+    PRJ_transform_point(point_2d,
                        vertex,
                        PRJ_position,
                        res);
     SDL_RenderDrawPoint(renderer, point_2d[0], point_2d[1]);
 }
 
-void PRJ_transformPoint(int point_2d[],
+void PRJ_transform_point(int point_2d[],
                         double vertex[],
                         double camera[],
                         int res[]) {
@@ -113,20 +113,20 @@ void PRJ_transformPoint(int point_2d[],
     point_2d[1] = (int) (res[1] / 2 - (dy * res[1]) / (dz * R[1]) * R[2]);
 }
 
-void PRJ_setSlow( bool s ) { PRJ_slow = s; }
-void PRJ_moveForward() { PRJ_moveHorizontal(-CAMERA_SPEED, PRJ_rotation[1]); }
-void PRJ_moveBack() { PRJ_moveHorizontal(CAMERA_SPEED, PRJ_rotation[1]); }
-void PRJ_moveRight() { PRJ_moveHorizontal(-CAMERA_SPEED, PRJ_rotation[1] + M_PI / 2); }
-void PRJ_moveLeft() { PRJ_moveHorizontal(CAMERA_SPEED, PRJ_rotation[1] + M_PI / 2); }
-void PRJ_moveUp() { PRJ_moveVertical(CAMERA_SPEED); }
-void PRJ_moveDown() { PRJ_moveVertical( -CAMERA_SPEED ); }
+void PRJ_set_slow( bool s ) { PRJ_slow = s; }
+void PRJ_move_forward() { PRJ_move_horizontal(-CAMERA_SPEED, PRJ_rotation[1]); }
+void PRJ_move_back() { PRJ_move_horizontal(CAMERA_SPEED, PRJ_rotation[1]); }
+void PRJ_move_right() { PRJ_move_horizontal(-CAMERA_SPEED, PRJ_rotation[1] + M_PI / 2); }
+void PRJ_move_left() { PRJ_move_horizontal(CAMERA_SPEED, PRJ_rotation[1] + M_PI / 2); }
+void PRJ_move_up() { PRJ_move_vertical(CAMERA_SPEED); }
+void PRJ_move_down() { PRJ_move_vertical( -CAMERA_SPEED ); }
 
-void PRJ_moveHorizontal( double d, double v ) {
+void PRJ_move_horizontal( double d, double v ) {
     if ( PRJ_slow ) d *= CAMERA_SLOW_MULTIPLIER;
     PRJ_accelerate( 0, -d * sin(v) );
     PRJ_accelerate( 2, -d * cos(v) );
 }
-void PRJ_moveVertical( double d ) {
+void PRJ_move_vertical( double d ) {
     if ( PRJ_slow ) d *= CAMERA_SLOW_MULTIPLIER;
     PRJ_accelerate( 1, d );
 }
@@ -138,7 +138,7 @@ void PRJ_rotate(int u, int v) {
     PRJ_rotation[1] = fmod( PRJ_rotation[1] + u * MOUSE_SENSITIVITY, M_PI * 2 );
 }
 
-void PRJ_setDimensions( int w, int h ) {
+void PRJ_set_dimensions( int w, int h ) {
     PRJ_dimensions[2] = w / ( PRJ_dimensions[0] * PRJ_dimensions[2] );
     PRJ_dimensions[0] = w / 100.0;
     PRJ_dimensions[1] = h / 100.0;

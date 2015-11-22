@@ -1,6 +1,8 @@
 #include "object.h"
 
-void triangle_create(double vertices[][3], int indices[], struct Triangle* T) {
+static void triangle_create(double vertices[][3],
+                            int indices[],
+                            struct Triangle* T) {
     for (int i = 0; i < 3; i++) {
         T->P1[i] = vertices[indices[0]][i];
         T->P2[i] = vertices[indices[1]][i];
@@ -21,8 +23,7 @@ void triangle_create(double vertices[][3], int indices[], struct Triangle* T) {
 
 void object_create(char* obj_file_path,
                    double pos[],
-                   double rot[],
-                   int color[],
+                   uint8_t color[],
                    double brightness,
                    double reflectiveness,
                    struct Object* O) {
@@ -36,17 +37,9 @@ void object_create(char* obj_file_path,
     double vertices[MAX_VERTICES][3];
     int indices[MAX_TRIANGLES][3];
     int vertexc = 0, indexc = 0;
-    _load_obj_file(obj_file_path, &vertexc, vertices, &indexc, indices);
+    load_obj_file(obj_file_path, &vertexc, vertices, &indexc, indices);
     O->tric = indexc;
     
-    /* rotate vertices around object center */
-    double center[3];
-    _calc_center(vertexc, vertices, center);
-    /* for (int i = 0; i < vertexc; i++)
-        rotate(vertices[i], center, 
-               pos[0], pos[1], pos[2],
-               vertices[i]); */
-
     /* move vertices */
     for (int i = 0; i < vertexc; i++)
         for (int j = 0; j < 3; j++)
@@ -59,28 +52,9 @@ void object_create(char* obj_file_path,
     }
 }
 
-void _calc_center(int vertexc, double vertices[][3], double center[]) {
-    double min[3], max[3];
-    /* set max and min to first vertices */
-    for (int i = 0; i < 3; i++) {
-        min[i] = vertices[0][i];
-        max[i] = vertices[0][i];
-    }
-    /* compare the rest with current min and max */
-    for (int i = 1; i < vertexc; i++) {
-        for (int j = 0; j < 3; j++) {
-            if (vertices[i][j] < min[j]) min[j] = vertices[i][j];
-            if (vertices[i][j] > max[j]) max[j] = vertices[i][j];
-        }
-    }
-    for (int i = 0; i < 3; i++) {
-        center[i] = min[i] + (max[i]-min[i])/2;
-    }
-}
-    
-void _load_obj_file(char* file_path, 
-                    int* vertexc, double vertices[][3], 
-                    int* indexc, int indices[][3]) {
+static void load_obj_file(char* file_path, 
+                          int* vertexc, double vertices[][3], 
+                          int* indexc, int indices[][3]) {
     /* add vertices and faces from obj file
      * if provided with pos/rot, add position and rotation */
     int c, p;
@@ -95,7 +69,7 @@ void _load_obj_file(char* file_path,
             } while (c != EOF && c != '\n');
             if (c == EOF) break;
             line_buffer[p] = 0;
-            _parse_line(line_buffer, vertexc, vertices, indexc, indices);
+            parse_line(line_buffer, vertexc, vertices, indexc, indices);
         }
         fclose(f);
         printf("%d vertices and %d triangles loaded from '%s'.\n",
@@ -105,9 +79,9 @@ void _load_obj_file(char* file_path,
     free(line_buffer);
 }
 
-void _parse_line(char* line,
-                 int* vertexc, double vertices[][3],
-                 int* indexc, int indices[][3]) {
+static void parse_line(char* line,
+                       int* vertexc, double vertices[][3],
+                       int* indexc, int indices[][3]) {
     /* use strtok to tokenize / segment line
      * strtok modifies original string
      * strtok replaces separator string with null character
@@ -134,7 +108,7 @@ void _parse_line(char* line,
             for (int i = 0; i < 3; i++) {
                 char* index_str = strtok(tokens[i], "/");
                 /* string to int */
-                indices[*indexc][i] = atoi(index_str);
+                indices[*indexc][i] = atoi(index_str) - 1;
             }
             *indexc = *indexc + 1;
         }
