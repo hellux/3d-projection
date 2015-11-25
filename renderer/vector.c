@@ -41,6 +41,14 @@ double magnitude(double u[]) {
                 pow(u[2], 2));
 }
 
+void vector_print(double u[]) {
+    printf("\n( ");
+    for (int i = 0; i < 3; i++) {
+        printf("%f ", u[i]);
+    }
+    printf(")\n");
+}
+
 bool vector_equal(double u[], double v[]) {
     /* u == v */
     bool equal = true;

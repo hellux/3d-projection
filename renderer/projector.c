@@ -44,11 +44,9 @@ static void calc_pixel_color(struct World W,
             }
         }
     }
-    int c = (collide) ? 255 : 0;
 
-    for (int i = 0; i < 3; i++) {
-        color[i] = c;
-    }
+    int c = (collide) ? 255 : 0;
+    for (int i = 0; i < 3; i++) color[i] = c;
 }
 
 static bool calc_ray_collision(double S[], double V[], 
@@ -65,11 +63,11 @@ static bool calc_collision_point_plane(double S[], double V[],
     /* Points on ray can be expressed:
      * P(t) = S + tV
      * where S is the starting point and V is the direction vector.
-     * to calc what t is where the ray collides with a triangle's plane:
-     * t = -( N*S - N*T1 ) / ( N*V ) 
+     * t is where the ray collides with a triangle's plane:
+     * t = -( N*S - N*T1 ) / ( N*V ) = -( N*S + D ) / ( N*V )
      * N is the plane's normal
      * T1 can be any vertex of the triangle */
-    double numerator = T.D - dot_product(T.N, S);
+    double numerator = -T.D - dot_product(T.N, S);
     double denominator = dot_product(T.N, V);
     double t = numerator / denominator;
 
@@ -85,13 +83,12 @@ static bool calc_collision_point_plane(double S[], double V[],
 static bool calc_point_in_triangle(double P[], struct Triangle T) {
     /* R = P - T1
      * Q1 = T2 - T1
-     * Q2 = T3 - T1
-     * M1 = */
+     * Q2 = T3 - T1 */
     double R[3];
     vector_subtract(P, T.P1, R);
-    double M2[][2] = {{dot_product(R, T.Q1)},
+    double M2[][1] = {{dot_product(R, T.Q1)},
                       {dot_product(R, T.Q2)}};
-    double W[][2] = {{0, 0}};
+    double W[2][1];
     matrix_product(2, 2, T.M, 2, 1, M2, W);
     bool point_in_triangle = true;
     double w[] = {1-W[0][0]-W[1][0], W[0][0], W[1][0] };

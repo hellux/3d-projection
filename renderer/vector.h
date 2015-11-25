@@ -12,6 +12,7 @@ void vector_multiply(double m, double u[], double v[]);
 void cross_product(double u[], double v[], double w[]);
 double dot_product(double u[], double v[]);
 double magnitude(double u[]);
+void vector_print(double u[]);
 bool vector_equal(double u[], double v[]);
 void vector_test(void);
 

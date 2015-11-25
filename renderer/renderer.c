@@ -7,10 +7,10 @@ int main(int argc, char* args) {
     matrix_test();
 
     double pos[] = {0, 0, 0};
-    double posc[] = {0, 0, 0};
-    double rot[] = {0, 0, 0};
+    double posc[] = {0, 5, -5};
+    double rot[] = {0, 0.78, 0};
     uint8_t col[] = {0xFF, 0xFF, 0xFF};
-    int res[] = {320, 240};
+    int res[] = {20, 20};
     double fov = 1.5;
     double focal_length = 0.01;
 

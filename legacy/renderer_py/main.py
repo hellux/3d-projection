@@ -10,10 +10,11 @@ def main():
     item = Solid('../../data/cube_tri.obj')
     world = {}
     world['item'] = item
-    camera = Camera(pos=(-0.3, -0.3, -5),
-                    rot=(-pi/50, pi/50),
+    camera = Camera(pos=(0, 0, -5),
+                    rot=(0, 0),
                     res=(20, 20),
-                    fov=0.9*pi)
+                    fov=1.5,
+                    focal_length = 0.01)
     render(world, camera)
 
 def render(world, camera, filepath=None):
@@ -27,7 +28,6 @@ def render(world, camera, filepath=None):
                 image.putpixel((x, y), pixel_map[y][x])
 
     image.save(filepath)
-    image.show()
     print('Image saved to {}.'.format(filepath))
     
 if __name__ == '__main__':

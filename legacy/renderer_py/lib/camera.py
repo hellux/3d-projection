@@ -1,4 +1,4 @@
-from math import cos, sin, pi
+from math import cos, sin, tan, pi
 from time import time
 
 from lib.matrix import matrix_multiply
@@ -45,7 +45,7 @@ class Camera:
 
     def _calculate_array_dimensions(self):
         """calculate the relative width and height for the pixel array"""
-        width = self.focal_length * sin(self.fov/2)
+        width = self.focal_length * tan(self.fov/2) * 2
         height = width * (self.res[1]/self.res[0])
         self.array_size = (width, height)
 
@@ -111,7 +111,6 @@ class Camera:
             # L = <N, D> | 4d plane vector
             # t = - ( L*S ) / ( L*V ) = - ( N*S - N*T[0] ) / ( N*V )
             t = -(dot_product(N, S)-dot_product(N, T[0])) / dot_product(N, V)
-            # t = magnitude(vector_subtract(S, T[0])) / magnitude(V)
         except ZeroDivisionError:
             print('Triangle\'s plane is parallel to ray, collision impossible')
             return None
@@ -123,6 +122,7 @@ class Camera:
         M2 = ((dot_product(R, Q[0]),),
               (dot_product(R, Q[1]),))
         w = matrix_multiply(M1, M2)
+        print(w)
         w = (1-w[0][0]-w[1][0], w[0][0], w[1][0])
         if all([i > 0 for i in w]) and t > 0:
             #point P is inside triangle / ray  goes through triangle
