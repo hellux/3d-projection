@@ -1,6 +1,3 @@
-#ifndef renderer_h
-#define renderer_h
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -9,4 +6,5 @@
 #include "world.h"
 #include "camera.h"
 
-#endif
+#include "matrix.h"
+#include "vector.h"

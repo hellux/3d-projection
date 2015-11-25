@@ -1,6 +1,11 @@
 #include "renderer.h"
 
 int main(int argc, char* args) {
+
+    /* test sub file functions */
+    vector_test();
+    matrix_test();
+
     double pos[] = {0, 0, 0};
     double posc[] = {0, 0, 0};
     double rot[] = {0, 0, 0};
