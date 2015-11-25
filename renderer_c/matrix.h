@@ -15,7 +15,7 @@ void matrix_scalar(double m,
 void matrix_inverse(double A[][2], double B[][2]);
 void matrix_print(size_t rows_A, size_t cols_A, double A[][cols_A]);
 bool matrix_equal(size_t rows, size_t cols, double A[][cols],
-											double B[][cols]);
+                                            double B[][cols]);
 void matrix_test(void);
 
 #endif

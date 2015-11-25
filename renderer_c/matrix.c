@@ -60,41 +60,41 @@ void matrix_print(size_t rows_A, size_t cols_A, double A[][cols_A]) {
 }
 
 bool matrix_equal(size_t rows, size_t cols, double A[][cols],
-											double B[][cols]) {
-	/* A == B */
-	bool equal = true;
-	for (int i = 0; i < rows; i++) {
-		for (int j = 0; j < cols; j++) {
-			equal = (A[i][j] == B[i][j] ? equal : false);	
-		}
-	}	
+                                            double B[][cols]) {
+    /* A == B */
+    bool equal = true;
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            equal = (A[i][j] == B[i][j] ? equal : false);    
+        }
+    }    
 }
 
 void matrix_test(void) {
-	double A[][3] = {{1, 2, 3},
-				     {4, 5, 6},
-				     {7, 8, 9}};
-	double B[][3] = {{10, 11, 12},
-					 {13, 14, 15},
-					 {16, 17, 18}};
-	double C[3][3];
-	double D[][2] = {{1, 2},
-					 {3, 4}};
-	double E[2][2];
-	double mul[][3] = {{84,  90,  96 },
-					   {201, 216, 231},
-					   {318, 342, 366}};
-	double scl[][3] = {{2,  4,  6 },
-					   {8,  10, 12},
-					   {14, 16, 18}};
-	double inv[][2] = {{-2,    1  },
-					   { 3/2, -1/2}};
+    double A[][3] = {{1, 2, 3},
+                     {4, 5, 6},
+                     {7, 8, 9}};
+    double B[][3] = {{10, 11, 12},
+                     {13, 14, 15},
+                     {16, 17, 18}};
+    double C[3][3];
+    double D[][2] = {{1, 2},
+                     {3, 4}};
+    double E[2][2];
+    double mul[][3] = {{84,  90,  96 },
+                       {201, 216, 231},
+                       {318, 342, 366}};
+    double scl[][3] = {{2,  4,  6 },
+                       {8,  10, 12},
+                       {14, 16, 18}};
+    double inv[][2] = {{-2,    1  },
+                       { 3/2, -1/2}};
 
-	matrix_product(3, 3, A, 3, 3, B, C);
-	assert(matrix_equal(3, 3, C, mul));
-	matrix_scalar(2, 3, 3, A, D);
-	assert(matrix_equal(3, 3, C, scl));
-	matrix_inverse(D, E);
-	assert(matrix_equal(2, 2, E, inv));
+    matrix_product(3, 3, A, 3, 3, B, C);
+    assert(matrix_equal(3, 3, C, mul));
+    matrix_scalar(2, 3, 3, A, D);
+    assert(matrix_equal(3, 3, C, scl));
+    matrix_inverse(D, E);
+    assert(matrix_equal(2, 2, E, inv));
 }
 

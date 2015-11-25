@@ -42,33 +42,33 @@ double magnitude(double u[]) {
 }
 
 bool vector_equal(double u[], double v[]) {
-	/* u == v */
-	bool equal = true;
-	for (int i = 0; i < 3; i++) {
-		equal = (u[i] == v[i] ? equal : false);
-	}
+    /* u == v */
+    bool equal = true;
+    for (int i = 0; i < 3; i++) {
+        equal = (u[i] == v[i] ? equal : false);
+    }
 }
 
 void vector_test(void) {
-	double u[] = {1, 2, 3};
-	double v[] = {4, 5, 6};
-	double w[3];
-	/* results */
-	double add[] = {5, 7, 9};
-	double sub[] = {-3, -3, -3};
-	double mul[] = {2, 4, 6};
-	double crp[] = {-3, 6, -3};
-	double dot = 32;
-	double mag = sqrt(14);
+    double u[] = {1, 2, 3};
+    double v[] = {4, 5, 6};
+    double w[3];
+    /* results */
+    double add[] = {5, 7, 9};
+    double sub[] = {-3, -3, -3};
+    double mul[] = {2, 4, 6};
+    double crp[] = {-3, 6, -3};
+    double dot = 32;
+    double mag = sqrt(14);
 
-	vector_add(u, v, w);
-	assert(vector_equal(w, add));
-	vector_subtract(u, v, w);
-	assert(vector_equal(w, sub));
-	vector_multiply(2, u, w);
-	assert(vector_equal(w, mul));
-	cross_product(u, v, w);
-	assert(vector_equal(w, crp));
-	assert(dot_product(u, v) == dot);
-	assert(magnitude(u) == mag);
+    vector_add(u, v, w);
+    assert(vector_equal(w, add));
+    vector_subtract(u, v, w);
+    assert(vector_equal(w, sub));
+    vector_multiply(2, u, w);
+    assert(vector_equal(w, mul));
+    cross_product(u, v, w);
+    assert(vector_equal(w, crp));
+    assert(dot_product(u, v) == dot);
+    assert(magnitude(u) == mag);
 }
