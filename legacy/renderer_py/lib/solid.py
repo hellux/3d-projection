@@ -71,7 +71,7 @@ class Solid:
         return tuple(vertices)
 
 def test():
-    obj = Solid("data/911.obj")
+    obj = Solid("data/cube_tri.obj")
     
     assert len(obj.vertices) == 32918
     assert len(obj.faces) == 22011

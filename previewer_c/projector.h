@@ -6,13 +6,11 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+#include "world.h"
 #include "camera.h"
 #include "object.h"
 
-#define OBJECTS_START_BUFFER 3
-
-void PRJ_add_object(char* obj_file_path, double pos[], int type);
-void PRJ_render(SDL_Renderer* renderer, struct Camera* C);
+void PRJ_render(SDL_Renderer* renderer, struct World* W, struct Camera* C);
 static void PRJ_render_object(SDL_Renderer* renderer,
                               struct Camera* C,
                               struct Object* O);

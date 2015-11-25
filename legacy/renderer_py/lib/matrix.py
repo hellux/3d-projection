@@ -25,6 +25,7 @@ def _mm_multiply(A, B):
             for col_A in range(nA):
                 current_row[col_B] += A[row][col_A] * B[col_A][col_B]
         C.append(tuple(current_row))
+    print(C)
     return tuple(C)
 
 def _nm_multiply(multiplier, A):

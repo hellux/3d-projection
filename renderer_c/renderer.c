@@ -1,14 +1,19 @@
 #include "renderer.h"
 
 int main(int argc, char* args) {
-    double pos[3];
-    double posc[] = {0, 123, 0};
-    double rot[2];
-    uint8_t col[3];
-    int res[] = {400, 300};
+    double pos[] = {0, 0, 0};
+    double posc[] = {0, 0, 0};
+    double rot[] = {0, 0, 0};
+    uint8_t col[] = {0xFF, 0xFF, 0xFF};
+    int res[] = {320, 240};
+    double fov = 1.5;
+    double focal_length = 0.01;
 
-    PRJ_add_object("../data/cube_tri.obj", pos, col, 0, 0.5);
-    PRJ_render(posc, rot, res, 1.7, 0.1);
+    struct World world = *world_create();
+    struct Camera camera = *camera_create(posc, rot, res, fov, focal_length);
+    
+    world_add_object(&world, "../data/cube_tri.obj", pos, col, 0, 0.5);
+    PRJ_render(world, camera);
 
     return EXIT_SUCCESS;
 }

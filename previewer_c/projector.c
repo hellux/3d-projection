@@ -1,38 +1,15 @@
 #include "projector.h"
 
-static int objc = 0;
-static int objb = OBJECTS_START_BUFFER;
-static struct Object* objs;
-
-void PRJ_add_object(char* obj_file_path, double pos[], int type) {
-
-    /* allocate memory for array */
-    if (objc == 0) {
-        SDL_Log("Allocating memory for object array");
-        objs = (struct Object*)malloc(sizeof(struct Object)*objb);
-    }
-    /* allocate more memory if the object array is about to become full */
-    if (objc == objb-1) {
-        SDL_Log("Allocating more memory for object array");
-        objb += OBJECTS_START_BUFFER;
-        objs = (struct Object*)realloc(objs, sizeof(struct Object)*objb);
-    }
-     
-    uint8_t color[] = {255, 255, 255}; 
-    SDL_Log("Creating object");
-    object_create(obj_file_path, pos, color, &objs[objc]);
-    objc++;
-}
-
-void PRJ_render(SDL_Renderer* renderer, struct Camera* C) {
-    for (int obj = 0; obj < objc; obj++) {
-        PRJ_render_object(renderer, C, &objs[obj]);
+void PRJ_render(SDL_Renderer* renderer, struct World* W, struct Camera* C) {
+    for (int obj = 0; obj < W->object_count; obj++) {
+        PRJ_render_object(renderer, C, &W->objects[obj]);
     }
 }
 
 static void PRJ_render_object(SDL_Renderer* renderer,
                               struct Camera* C,
                               struct Object* O) {
+    SDL_SetRenderDrawColor(renderer, O->color[0], O->color[1], O->color[2], 0xFF);
     for (int v = 0; v < O->vertexc ; v++) {
         PRJ_render_point(renderer, C, O->vertices[v]);
     }

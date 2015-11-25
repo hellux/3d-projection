@@ -1,2 +1,2 @@
-# 3d-projection
-Experiment to render 3D objects onto a 2D surface. Previewer written in C++ with SDL and renderers written in Python 3.5.0 and C.
+# 3D-projection
+Experiment to render 3D objects onto a 2D surface. Previewer and render written in C. Previewer uses the SDL library.

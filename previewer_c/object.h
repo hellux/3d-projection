@@ -1,5 +1,5 @@
 #ifndef object_h
-#define objec_h
+#define object_h
 
 #include <stdio.h>
 #include <stdlib.h>
