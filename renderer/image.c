@@ -63,10 +63,13 @@ bool save_bitmap_to_png(struct Bitmap *bitmap, char* png_file_path) {
     png_set_rows(png_ptr, info_ptr, row_pointers);
     png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
 
+    printf("Bitmap written to '%s'.\n", png_file_path);
+
     for (y = 0; y < bitmap->height; y++) {
         png_free(png_ptr, row_pointers[y]);
     }
     png_free(png_ptr, row_pointers);
     fclose(f_png);
+
     return true;
 }

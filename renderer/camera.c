@@ -12,7 +12,8 @@ struct Camera* camera_create(double pos[], double rot[], int res[],
     for (int i = 0; i < 2; i++) {
         if (res[i] > 0) C->res[i] = res[i];
         else {
-            fprintf(stderr, "Invalid resolution.\n");
+            fprintf(stderr, "renderer: invalid resolution -- %dx%dpx\n",
+                    res[0], res[1]);
             return NULL;
         }
     }
@@ -20,12 +21,12 @@ struct Camera* camera_create(double pos[], double rot[], int res[],
     /* copy variables to struct */
     if (fov > 0 && fov < M_PI) C->fov = fov;
     else {
-        fprintf(stderr, "Invalid field of view.\n");
+        fprintf(stderr, "renderer: invalid field of view -- %f m\n", fov);
         return NULL;
     }
     if (focal_length > 0) C->focal_length = focal_length;
     else {
-        fprintf(stderr, "Invalid focal length.\n");
+        fprintf(stderr, "renderer: invalid focal length -- %f rad\n", focal_length);
         return NULL;
     }
 
