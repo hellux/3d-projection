@@ -4,7 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include <png.h>
+
+#define PNG_BIT_DEPTH 8
+#define PIXEL_SIZE 3 
 
 struct Pixel {
     uint8_t red;
@@ -21,6 +25,6 @@ struct Bitmap {
 struct Bitmap* bitmap_create(int res[]);
 struct Pixel* get_pixel(struct Bitmap* bitmap, size_t x, size_t y);
 void set_pixel(struct Bitmap* bitmap, size_t x, size_t y, uint8_t col[]);
-void save_bitmap_to_png(struct Bitmap *bitmap, char* png_file_path);
+bool save_bitmap_to_png(struct Bitmap *bitmap, char* png_file_path);
 
 #endif

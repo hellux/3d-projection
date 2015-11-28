@@ -1,14 +1,12 @@
 #include "object.h"
 
-void object_create(char* obj_file_path,
+bool object_create(const char* obj_file_path,
                    double pos[],
                    uint8_t color[],
-                   double brightness,
-                   double reflectiveness,
+                   bool light,
                    struct Object* O) {
     /* set surface properties */
-    O->brightness = brightness;
-    O->reflectiveness = reflectiveness;
+    O->light = light;
     for (int i = 0; i < 3; i++)
         O->color[i] = color[i];
     
@@ -16,7 +14,9 @@ void object_create(char* obj_file_path,
     double vertices[MAX_VERTICES][3];
     int indices[MAX_TRIANGLES][3];
     int vertexc = 0, indexc = 0;
-    load_obj_file(obj_file_path, &vertexc, vertices, &indexc, indices);
+    if (!load_obj_file(obj_file_path, &vertexc, vertices, &indexc, indices)) {
+        return false;
+    }
     O->tric = indexc;
     
     /* move vertices */
@@ -29,11 +29,13 @@ void object_create(char* obj_file_path,
     for (int i = 0; i < O->tric; i++) {
         triangle_create(vertices, indices[i], &O->tris[i]);
     }
+
+    return true; /* object was created successfully */
 }
 
-static void load_obj_file(char* file_path, 
-                          int* vertexc, double vertices[][3], 
-                          int* indexc, int indices[][3]) {
+bool load_obj_file(const char* file_path, 
+                   int* vertexc, double vertices[][3], 
+                   int* indexc, int indices[][3]) {
     /* add vertices and faces from obj file
      * if provided with pos/rot, add position and rotation */
     int c, p;
@@ -54,22 +56,27 @@ static void load_obj_file(char* file_path,
         printf("%d vertices and %d triangles loaded from '%s'.\n",
         *vertexc, *indexc, file_path);
     }
-    else { printf("File at %s not loaded", file_path); }
+    else { 
+        printf("File at '%s' not loaded\n", file_path);
+        return false;
+    }
     free(line_buffer);
+    return (*vertexc > 0 && indexc > 0);
 }
 
-static void parse_line(char* line,
-                       int* vertexc, double vertices[][3],
-                       int* indexc, int indices[][3]) {
-    /* use strtok to tokenize / segment line
+void parse_line(char* line,
+                int* vertexc, double vertices[][3],
+                int* indexc, int indices[][3]) {
+    /* face must be a triangle
+     * use strtok to tokenize / segment line
      * strtok modifies original string
      * strtok replaces separator string with null character
-     * "v 1.0 2.0 3.0" | token_start = "v"
-     * "v\01.0 2.0 3.0" | token_1 = "1.0"
-     * "v\01.0\02.0 3.0" | token_2 = "2.0"
-     * "v\01.0\02.0\03.0" | token_3 = "3.0"
-     * hidden global variable keeps track of start for next token*/
-    char* separators[4];
+     * hidden global variable keeps track of start for next token
+     * "v 1.0 2.0 3.0"    | token_start = "v"
+     * "v\01.0 2.0 3.0"   | token_1 = "1.0"
+     * "v\01.0\02.0 3.0"  | token_2 = "2.0"
+     * "v\01.0\02.0\03.0" | token_3 = "3.0" */
+
     char* token_start = strtok(line, " ");
     char* tokens[3];
     for (int i = 0; i < 3; i++) tokens[i] = strtok(NULL, " ");

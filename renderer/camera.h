@@ -19,8 +19,8 @@ struct Camera {
 
 struct Camera* camera_create(double pos[], double rot[], int res[], 
                              double fov, double focal_length);
-static void calc_array_size(struct Camera* C);
-static void calc_rotation_matrix(struct Camera* C);
+void calc_array_size(struct Camera* C);
+void calc_rotation_matrix(struct Camera* C);
 void camera_calc_direction(struct Camera C, int row, int col, double V[]);
 
 #endif

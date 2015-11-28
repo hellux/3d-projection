@@ -7,15 +7,27 @@ struct Camera* camera_create(double pos[], double rot[], int res[],
     /* copy arrays to struct*/ 
     for (int i = 0; i < 3; i++) {
         C->pos[i] = pos[i];
-        C->rot[i] = rot[i];
+        C->rot[i] = fmod(rot[i], 2*M_PI);
     }
     for (int i = 0; i < 2; i++) {
-        C->res[i] = res[i];
+        if (res[i] > 0) C->res[i] = res[i];
+        else {
+            printf("Invalid resolution.\n");
+            return NULL;
+        }
     }
 
     /* copy variables to struct */
-    C->fov = fov;
-    C->focal_length = focal_length;
+    if (fov > 0 && fov < M_PI) C->fov = fov;
+    else {
+        printf("Invalid field of view.\n");
+        return NULL;
+    }
+    if (focal_length > 0) C->focal_length = focal_length;
+    else {
+        printf("Invalid focal length.\n");
+        return NULL;
+    }
 
     /* perform one-time calculations */ 
     calc_array_size(C);
@@ -25,7 +37,7 @@ struct Camera* camera_create(double pos[], double rot[], int res[],
     return C;
 }
 
-static void calc_array_size(struct Camera* C) {
+void calc_array_size(struct Camera* C) {
     /*     width
      * |-----------|   [m]
      *  ___________ _
@@ -40,7 +52,7 @@ static void calc_array_size(struct Camera* C) {
      * tan(v) = (width/2) / focal length = width/(2*focal length)
      * width = tan(v) * 2 * focal length
      * v = fov/2
-     * width = tav(fov/2) * 2 * focal_length
+     * width = tan(fov/2) * 2 * focal_length
      *
      *                      res_x
      *   width   [m]      __________  [px]
@@ -55,7 +67,7 @@ static void calc_array_size(struct Camera* C) {
     C->array_size[1] = C->array_size[0] * (C->res[1]/C->res[0]);
 }
 
-static void calc_rotation_matrix(struct Camera* C) {
+void calc_rotation_matrix(struct Camera* C) {
     double rot_x[3][3], rot_y[3][3], rot_z[3][3]; 
 
     /* rotation matrix for x axis (yaw):

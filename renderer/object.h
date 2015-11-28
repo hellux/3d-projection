@@ -17,21 +17,19 @@ struct Object {
     struct Triangle* tris;   /* array of pointers to triangle structs */
     int tric;                /* amount of triangles */
     uint8_t color[3];        /* rgb color */
-    double brightness;       /* brigtness of object surface */
-    double reflectiveness;   /* reflectiveness -||- */
+    bool light;              /* is light source */
 };
 
-void object_create(char* obj_file_path,
+bool object_create(const char* obj_file_path,
                    double pos[],
                    uint8_t color[],
-                   double brightness,
-                   double reflectiveness,
+                   bool light,
                    struct Object* O);
-static void load_obj_file(char* file_path,
-                          int* vertexc, double vertices[][3],
-                          int* indexc, int indices[][3]);
-static void parse_line(char* line_buffer,
-                       int* vertexc, double vertices[][3],
-                       int* indexc, int indices[][3]);
+bool load_obj_file(const char* file_path,
+                   int* vertexc, double vertices[][3],
+                   int* indexc, int indices[][3]);
+void parse_line(char* line_buffer,
+                int* vertexc, double vertices[][3],
+                int* indexc, int indices[][3]);
 
 #endif

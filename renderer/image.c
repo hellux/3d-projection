@@ -11,31 +11,34 @@ struct Bitmap* bitmap_create(int res[]) {
 }
 
 struct Pixel* get_pixel(struct Bitmap* bitmap, size_t x, size_t y) {
-    return bitmap->pixels + bitmap->width * y + x;
+    return bitmap->pixels + bitmap->width * (bitmap->height-y) + x;
 }
 
 void set_pixel(struct Bitmap* bitmap, size_t x, size_t y, uint8_t col[]) {
-    get_pixel(bitmap, x, y)->red = col[0];
-    get_pixel(bitmap, x, y)->green = col[1];
-    get_pixel(bitmap, x, y)->blue = col[2];
+    get_pixel(bitmap, x, bitmap->height-y)->red = col[0];
+    get_pixel(bitmap, x, bitmap->height-y)->green = col[1];
+    get_pixel(bitmap, x, bitmap->height-y)->blue = col[2];
 }
 
-void save_bitmap_to_png(struct Bitmap *bitmap, char* png_file_path) {
+bool save_bitmap_to_png(struct Bitmap *bitmap, char* png_file_path) {
     FILE* f_png;
     png_structp png_ptr = NULL;
     png_infop info_ptr = NULL;
     size_t x, y;
     png_byte** row_pointers = NULL;
-    int pixel_size = 3;
-    int depth = 8;
     f_png = fopen(png_file_path, "wb");
     png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
     info_ptr = png_create_info_struct(png_ptr);
     
+    if (f_png == NULL) {
+        printf("Failed to open file '%s' for output.\n", png_file_path);
+        return false;
+    }
+    
     /* Set image attributes. */
     png_set_IHDR(png_ptr, info_ptr,
                  bitmap->width, bitmap->height,
-                 depth,
+                 PNG_BIT_DEPTH,
                  PNG_COLOR_TYPE_RGB,
                  PNG_INTERLACE_NONE,
                  PNG_COMPRESSION_TYPE_DEFAULT,
@@ -45,7 +48,7 @@ void save_bitmap_to_png(struct Bitmap *bitmap, char* png_file_path) {
     row_pointers = png_malloc(png_ptr, bitmap->height * sizeof(png_byte *));
     for (y = 0; y < bitmap->height; y++) {
         png_byte *row = png_malloc(png_ptr, 
-                                   sizeof(uint8_t)*bitmap->width*pixel_size);
+                                   sizeof(uint8_t)*bitmap->width*PIXEL_SIZE);
         row_pointers[y] = row;
         for (x = 0; x < bitmap->width; x++) {
             struct Pixel* pixel = get_pixel(bitmap, x, y);
@@ -65,4 +68,5 @@ void save_bitmap_to_png(struct Bitmap *bitmap, char* png_file_path) {
     }
     png_free(png_ptr, row_pointers);
     fclose(f_png);
+    return true;
 }

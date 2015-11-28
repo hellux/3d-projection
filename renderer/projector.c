@@ -1,28 +1,25 @@
 #include "projector.h"
 
-void PRJ_render(struct World W, struct Camera C) {
-
-    struct Bitmap bitmap = *bitmap_create(C.res);
+struct Bitmap* projector_render(struct World W, struct Camera C) {
+    struct Bitmap* bitmap = bitmap_create(C.res);
 
     for (int row = 0; row < C.res[1]; row++) {
         for (int col = 0; col < C.res[0]; col++) {
             print_progress_bar((double)(row*C.res[0]+col)/(C.res[0]*C.res[1]));
             uint8_t color[3];
             calc_pixel_color(W, C, row, col, color);
-            set_pixel(&bitmap, col, row, color);
+            set_pixel(bitmap, col, row, color);
         }
     }
     printf("\n");
-
-    char* output = "out.png";
-    save_bitmap_to_png(&bitmap, output);
-    printf("Image output saved to '%s'.\n", output);
+    
+    return bitmap;
 }
 
-static void calc_pixel_color(struct World W,
-                             struct Camera C,
-                             int row, int col,
-                             uint8_t color[]) {
+void calc_pixel_color(struct World W,
+                      struct Camera C,
+                      int row, int col,
+                      uint8_t color[]) {
     double V[3];
     bool collide = false;
     double distance;
@@ -49,8 +46,8 @@ static void calc_pixel_color(struct World W,
     for (int i = 0; i < 3; i++) color[i] = c;
 }
 
-static bool calc_ray_collision(double S[], double V[], 
-                               struct Triangle T, double P[]) {
+bool calc_ray_collision(double S[], double V[], 
+                        struct Triangle T, double P[]) {
     /* calculates coordinates where (point P) ray hits a triangle's plane
      * and returns true if P is inside the triangle */ 
     bool plane_in_front_of_triangle = calc_collision_point_plane(S, V, T, P);
@@ -58,8 +55,8 @@ static bool calc_ray_collision(double S[], double V[],
     return point_in_triangle && plane_in_front_of_triangle;
 }
 
-static bool calc_collision_point_plane(double S[], double V[], 
-                                       struct Triangle T, double P[]) {
+bool calc_collision_point_plane(double S[], double V[], 
+                                struct Triangle T, double P[]) {
     /* Points on ray can be expressed:
      * P(t) = S + tV
      * where S is the starting point and V is the direction vector.
@@ -80,7 +77,7 @@ static bool calc_collision_point_plane(double S[], double V[],
     return (t > 0);
 }
 
-static bool calc_point_in_triangle(double P[], struct Triangle T) {
+bool calc_point_in_triangle(double P[], struct Triangle T) {
     /* R = P - T1
      * Q1 = T2 - T1
      * Q2 = T3 - T1 */
@@ -98,7 +95,7 @@ static bool calc_point_in_triangle(double P[], struct Triangle T) {
     return point_in_triangle;
 }
 
-static void print_progress_bar(double progress) {
+void print_progress_bar(double progress) {
     static time_t start;
     static char current_str[80];
     static char remaining_str[80];
@@ -125,5 +122,5 @@ static void print_progress_bar(double progress) {
     current_str[bar_current] = 0;
     remaining_str[bar_remaining] = 0;
     printf("\rRendering... %d%% %ds [%s%s]",
-           percentage, eta, current_str, remaining_str);
+           percentage, (int)eta, current_str, remaining_str);
 }

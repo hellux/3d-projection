@@ -16,11 +16,10 @@ struct World {
 };
 
 struct World* world_create();
-void world_add_object(struct World* W,
-                      char* obj_file_path,
+bool world_add_object(struct World* W,
+                      const char* obj_file_path,
                       double pos[],
                       uint8_t color[],
-                      double brightness,
-                      double reflectiveness);
+                      bool light);
 
 #endif
