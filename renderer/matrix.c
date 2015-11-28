@@ -7,7 +7,7 @@ void matrix_product(size_t rows_A, size_t cols_A, double A[][cols_A],
     /* Matrix product:
      * C = A*B */
     
-    if (cols_A != rows_B) printf("Matrices can't multiply!");
+    if (cols_A != rows_B) fprintf(stderr, "Matrices can't multiply!\n");
     for (int i = 0; i < rows_A; i++) {
         for (int j = 0; j < cols_B; j++) {
             C[i][j] = 0;

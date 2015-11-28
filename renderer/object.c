@@ -57,7 +57,7 @@ bool load_obj_file(const char* file_path,
         *vertexc, *indexc, file_path);
     }
     else { 
-        printf("File at '%s' not loaded\n", file_path);
+        fprintf(stderr, "File at '%s' not loaded\n", file_path);
         return false;
     }
     free(line_buffer);

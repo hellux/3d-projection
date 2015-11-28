@@ -10,9 +10,13 @@ int main(int argc, char* args[]) {
     }
     
     bitmap = *projector_render(world, camera);
-    save_bitmap_to_png(&bitmap, "out.png");
+    if (save_bitmap_to_png(&bitmap, "out.png")) {
+        return EXIT_SUCCESS;
+    }
+    else {
+        return EXIT_FAILURE;
+    }
 
-    return EXIT_SUCCESS;
 }
 
 bool config_parse(const char* cfg_path, struct World* world, struct Camera* camera) {
@@ -23,7 +27,7 @@ bool config_parse(const char* cfg_path, struct World* world, struct Camera* came
         fprintf(stderr, "%s:%d - %s\n", config_error_file(&cfg),
                 config_error_line(&cfg), config_error_text(&cfg));
         config_destroy(&cfg);
-        printf("Could not parse config file '%s'.", cfg_path);
+        fprintf(stderr, "Could not parse config file '%s'.\n", cfg_path);
         return false;
     }
     
@@ -37,7 +41,7 @@ bool config_parse(const char* cfg_path, struct World* world, struct Camera* came
 bool config_add_camera(config_t cfg, struct Camera* camera) {
     config_setting_t *stn_cam = config_lookup(&cfg, "camera");
     if (stn_cam == NULL) {
-        printf("Camera settings not found.");
+        fprintf(stderr, "Camera settings not found.");
         return false;
     }
 
@@ -107,7 +111,7 @@ bool config_add_object(config_setting_t* object, struct World* world) {
     int light;
 
     if (!config_setting_lookup_string(object, "path", &obj_file_path)) {
-        printf("No path to model in object section!\n");
+        fprintf(stderr, "No path to model in object section!\n");
         return false;
     }
 

@@ -31,7 +31,7 @@ bool save_bitmap_to_png(struct Bitmap *bitmap, char* png_file_path) {
     info_ptr = png_create_info_struct(png_ptr);
     
     if (f_png == NULL) {
-        printf("Failed to open file '%s' for output.\n", png_file_path);
+        fprintf(stderr, "Failed to open file '%s' for output.\n", png_file_path);
         return false;
     }
     
