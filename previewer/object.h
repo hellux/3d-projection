@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include <string.h>
 
 #define MAX_VERTICES 200000
@@ -16,13 +17,11 @@ struct Object {
     uint8_t color[3];
 };
 
-void object_create(char* obj_file_path,
+bool object_create(const char* obj_file_path,
                    double pos[],
                    uint8_t color[],
                    struct Object* O);
-static void object_vertices_malloc(struct Object* O);
-static void object_vertices_realloc(struct Object* O);
-static void load_obj_file(struct Object* O, char* file_path);
-static void parse_line(struct Object* O, char* line_buffer);
+bool load_obj_file(struct Object* O, const char* file_path);
+void parse_line(struct Object* O, char* line_buffer);
 
 #endif

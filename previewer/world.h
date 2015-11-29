@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 #include "object.h"
 
@@ -16,9 +17,9 @@ struct World {
 };
 
 struct World* world_create();
-void world_add_object(struct World* W,
-                      char* obj_file_path,
+bool world_add_object(struct World* W,
+                      const char* obj_file_path,
                       double pos[],
-                      int type);
+                      bool type);
 
 #endif

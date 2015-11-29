@@ -6,20 +6,34 @@ struct Camera* camera_create(double pos[], double rot[], int res[],
     
     for (int i = 0; i < 3; i++) C->pos[i] = pos[i];
     for (int i = 0; i < 2; i++) {
-        C->rot[i] = rot[i];
-        C->res[i] = res[i];
+        C->rot[i] = fmod(rot[i], M_PI/2);
+        if (res[i] > 0) C->res[i] = res[i];
+        else {
+            fprintf(stderr, "previewer: invalid resolution -- %dx%dpx\n",
+                    res[0], res[1]);
+            return NULL;
+        }
     }
 
-    C->dims[2] = focal_length;
-    C->fov = fov;
+    if (focal_length > 0) C->dims[2] = focal_length;
+    else {
+        fprintf(stderr, "previewer: invalid focal length -- %f m\n", focal_length);
+        return NULL;
+    }
+    if (fov > 0 && fov < M_PI) C->fov = fov;
+    else {
+        fprintf(stderr, "previewer: invalid field of view");
+        return NULL;
+    }
+
     camera_calc_dimensions(C);
 
     return C;
 }
 
 void camera_calc_dimensions(struct Camera* C) {
-    C->dims[0] = C->dims[2] * sin(C->fov/2); /* w = focal * sin(fov/2) */
-    C->dims[1] = C->dims[0] * C->res[1] / C->res[0]; /* h = w * res_h / res_w */
+    C->dims[0] = C->dims[2] * tan(C->fov/2) * 2;
+    C->dims[1] = C->dims[0] * C->res[1] / C->res[0];
 }
 
 void camera_set_slow(struct Camera* C, bool s) { C->slow = s; }

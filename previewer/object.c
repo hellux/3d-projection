@@ -1,6 +1,6 @@
 #include "object.h"
 
-void object_create(char* obj_file_path,
+bool object_create(const char* obj_file_path,
                    double pos[],
                    uint8_t color[],
                    struct Object* O) {
@@ -10,15 +10,17 @@ void object_create(char* obj_file_path,
     for (int i = 0; i < 3; i++) O->color[i] = color[i];
 
     /* parse vertices */
-    load_obj_file(O, obj_file_path);
+    if (!load_obj_file(O, obj_file_path)) return false;
     
     /* move vertices */
     for (int i = 0; i < O->vertexc; i++)
         for (int j = 0; j < 3; j++)
             O->vertices[i][j] += pos[j];
+
+    return true;
 }
 
-static void load_obj_file(struct Object* O, char* file_path) {
+bool load_obj_file(struct Object* O, const char* file_path) {
     /* add vertices and faces from obj file
      * if provided with pos/rot, add position and rotation */
     int character, pos;
@@ -39,11 +41,15 @@ static void load_obj_file(struct Object* O, char* file_path) {
         printf("%d vertices loaded from '%s'.\n",
         O->vertexc, file_path);
     }
-    else { printf("File at %s not loaded", file_path); }
+    else { 
+        fprintf(stderr, "previewer: file at %s coult not be loaded\n", file_path);
+        return false;
+    }
     free(line_buffer);
+    return O->vertexc > 0;
 }
 
-static void parse_line(struct Object* O, char* line) {
+void parse_line(struct Object* O, char* line) {
     /* use strtok to tokenize / segment line
      * strtok modifies original string
      * strtok replaces separator string with null character
@@ -52,7 +58,6 @@ static void parse_line(struct Object* O, char* line) {
      * "v\01.0\02.0 3.0" | token_2 = "2.0"
      * "v\01.0\02.0\03.0" | token_3 = "3.0"
      * hidden global variable keeps track of start for next token*/
-    char* separators[4];
     char* token_start = strtok(line, " ");
     char* tokens[3];
     for (int i = 0; i < 3; i++) tokens[i] = strtok(NULL, " ");

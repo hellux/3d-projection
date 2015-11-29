@@ -12,7 +12,7 @@ COMPILER_FLAGS = -Wall
 LINKER_FLAGS = -lm -lpng -lconfig
 
 #OBJ_NAME specifies the name of our exectuable
-OBJ_NAME = render
+OBJ_NAME = ../render
 
 #This is the target that compiles our executable
 all : $(OBJS)

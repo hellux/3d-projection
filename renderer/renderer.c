@@ -8,21 +8,26 @@ int main(int argc, char* args[]) {
     char* output_path = "render.png";
 
     for (int i = 1; i < argc; i++) {
-        if (strcmp(args[i], "-c") == 0) {
-            config_path = args[++i];
-        }
-        else if (strcmp(args[i], "-o") == 0) {
-            output_path = args[++i];
+        char* arg = args[i];
+        if (arg[0] == '-') {
+            char option = arg[1];
+            switch (option) {
+            case 'c':
+                config_path = args[++i];
+                break;
+            case 'o':
+                config_path = args[++i];
+                break;
+            default:
+                fprintf(stderr, "renderer: invalid option -- '%c'\n", option);
+            }
         }
         else {
             fprintf(stderr, "renderer: invalid argument -- '%s'\n", args[i]);
             return EXIT_FAILURE;
         }
     }
-
-    if (!config_parse(config_path, &world, &camera)) {
-        return EXIT_FAILURE;
-    }
+    if (!config_parse(config_path, &world, &camera)) return EXIT_FAILURE;
     
     bitmap = *projector_render(world, camera);
     

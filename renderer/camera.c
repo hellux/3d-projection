@@ -72,27 +72,27 @@ void calc_rotation_matrix(struct Camera* C) {
     double rot_x[3][3], rot_y[3][3], rot_z[3][3]; 
 
     /* rotation matrix for x axis (yaw):
-     *         | 1   0       0       |
-     * Rx(a) = | 0   cos(a)  sin(a)  |
-     *         | 0   -sin(a)  cos(a) | */
+     *         | 1   0      0       |
+     * Rx(a) = | 0   cos(a) -sin(a) |
+     *         | 0   sin(a) cos(a)  | */
     rot_x[0][0] = 1; rot_x[0][1] = 0;               rot_x[0][2] = 0;
-    rot_x[1][0] = 0; rot_x[1][1] = cos(C->rot[0]);  rot_x[1][2] = sin(C->rot[0]);
-    rot_x[2][0] = 0; rot_x[2][1] = -sin(C->rot[0]); rot_x[2][2] = cos(C->rot[0]);
+    rot_x[1][0] = 0; rot_x[1][1] = cos(C->rot[0]);  rot_x[1][2] = -sin(C->rot[0]);
+    rot_x[2][0] = 0; rot_x[2][1] = sin(C->rot[0]);  rot_x[2][2] = cos(C->rot[0]);
     
     /* rotation matrix for y axis (pitch)
-     *         | cos(b)  0   -sin(b) |
-     * Ry(b) = | 0       1   0       |
-     *         | sin(b)  0   cos(b)  | */
-    rot_y[0][0] = cos(C->rot[1]);  rot_y[0][1] = 0; rot_y[0][2] = -sin(C->rot[1]);
-    rot_y[1][0] = 0;               rot_y[1][1] = 1; rot_y[1][2] = 0;
-    rot_y[2][0] = sin(C->rot[1]);  rot_y[2][1] = 0; rot_y[2][2] = cos(C->rot[1]);
+     *         | cos(b)  0   sin(b) |
+     * Ry(b) = | 0       1   0      |
+     *         | -sin(b) 0   cos(b) | */
+    rot_y[0][0] = cos(C->rot[1]);  rot_y[0][1] = 0;  rot_y[0][2] = sin(C->rot[1]);
+    rot_y[1][0] = 0;               rot_y[1][1] = 1;  rot_y[1][2] = 0;
+    rot_y[2][0] = -sin(C->rot[1]); rot_y[2][1] = 0;  rot_y[2][2] = cos(C->rot[1]);
 
     /* rotation matrix for z axis (roll)
-     *         | cos(c) sin(c)   0 |
-     * Rz(c) = | -sin(c) cos(c)  0 |
-     *         | 0      0        1 | */
-    rot_z[0][0] = cos(C->rot[2]);  rot_z[0][1] = sin(C->rot[2]);  rot_z[0][2] = 0;
-    rot_z[1][0] = -sin(C->rot[2]); rot_z[1][1] = cos(C->rot[2]);  rot_z[1][2] = 0;
+     *         | cos(c) -sin(c) 0 |
+     * Rz(c) = | sin(c) cos(c)  0 |
+     *         | 0      0       1 | */
+    rot_z[0][0] = cos(C->rot[2]);  rot_z[0][1] = -sin(C->rot[2]); rot_z[0][2] = 0;
+    rot_z[1][0] = sin(C->rot[2]); rot_z[1][1] = cos(C->rot[2]);   rot_z[1][2] = 0;
     rot_z[2][0] = 0;               rot_z[2][1] = 0;               rot_z[2][2] = 1;
     
     /* combined rotation matrix

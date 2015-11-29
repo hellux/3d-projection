@@ -11,26 +11,24 @@ struct World* world_create() {
     return W;
 }
 
-void world_add_object(struct World* W,
-                      char* obj_file_path,
+bool world_add_object(struct World* W,
+                      const char* obj_file_path,
                       double pos[],
-                      int type) {
+                      bool light) {
     /* allocate more memory if the object array is about to become full */
     if (W->object_count == W->objects_buffer_size - 1) {
         W->objects_buffer_size += OBJECTS_START_BUFFER;
         W->objects = (struct Object*)realloc(W->objects, 
                                   sizeof(struct Object)*W->objects_buffer_size);
     }
-    uint8_t color[] = {0xFF, 0xFF, 0xFF};
-    switch (type) {
-        case 0:
-            break;
-        case 1:
-            color[2] = 0x00;
-            break;
-    }
 
-    object_create(obj_file_path, pos, color, &W->objects[W->object_count]);
-    W->object_count++;
+    uint8_t color[] = {0xFF, 0xFF, 0xFF}; /* white */
+    if (light) color[2] = 0x0; /* yellow color if light */
+
+    /* return if object was successfully created */
+    return object_create(obj_file_path,
+                         pos,
+                         color,
+                         &(W->objects[W->object_count++]));
 }
 
