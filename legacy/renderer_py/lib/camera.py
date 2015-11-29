@@ -122,7 +122,6 @@ class Camera:
         M2 = ((dot_product(R, Q[0]),),
               (dot_product(R, Q[1]),))
         w = matrix_multiply(M1, M2)
-        print(w)
         w = (1-w[0][0]-w[1][0], w[0][0], w[1][0])
         if all([i > 0 for i in w]) and t > 0:
             #point P is inside triangle / ray  goes through triangle

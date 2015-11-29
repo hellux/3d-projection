@@ -75,25 +75,25 @@ void calc_rotation_matrix(struct Camera* C) {
      *         | 1   0      0       |
      * Rx(a) = | 0   cos(a) -sin(a) |
      *         | 0   sin(a) cos(a)  | */
-    rot_x[0][0] = 1; rot_x[0][1] = 0;               rot_x[0][2] = 0;
-    rot_x[1][0] = 0; rot_x[1][1] = cos(C->rot[0]);  rot_x[1][2] = -sin(C->rot[0]);
-    rot_x[2][0] = 0; rot_x[2][1] = sin(C->rot[0]);  rot_x[2][2] = cos(C->rot[0]);
+    rot_x[0][0] = 1; rot_x[0][1] = 0;              rot_x[0][2] = 0;
+    rot_x[1][0] = 0; rot_x[1][1] = cos(C->rot[0]); rot_x[1][2] = -sin(C->rot[0]);
+    rot_x[2][0] = 0; rot_x[2][1] = sin(C->rot[0]); rot_x[2][2] = cos(C->rot[0]);
     
     /* rotation matrix for y axis (pitch)
      *         | cos(b)  0   sin(b) |
      * Ry(b) = | 0       1   0      |
      *         | -sin(b) 0   cos(b) | */
-    rot_y[0][0] = cos(C->rot[1]);  rot_y[0][1] = 0;  rot_y[0][2] = sin(C->rot[1]);
-    rot_y[1][0] = 0;               rot_y[1][1] = 1;  rot_y[1][2] = 0;
-    rot_y[2][0] = -sin(C->rot[1]); rot_y[2][1] = 0;  rot_y[2][2] = cos(C->rot[1]);
+    rot_y[0][0] = cos(C->rot[1]);  rot_y[0][1] = 0; rot_y[0][2] = sin(C->rot[1]);
+    rot_y[1][0] = 0;               rot_y[1][1] = 1; rot_y[1][2] = 0;
+    rot_y[2][0] = -sin(C->rot[1]); rot_y[2][1] = 0; rot_y[2][2] = cos(C->rot[1]);
 
     /* rotation matrix for z axis (roll)
      *         | cos(c) -sin(c) 0 |
      * Rz(c) = | sin(c) cos(c)  0 |
      *         | 0      0       1 | */
-    rot_z[0][0] = cos(C->rot[2]);  rot_z[0][1] = -sin(C->rot[2]); rot_z[0][2] = 0;
-    rot_z[1][0] = sin(C->rot[2]); rot_z[1][1] = cos(C->rot[2]);   rot_z[1][2] = 0;
-    rot_z[2][0] = 0;               rot_z[2][1] = 0;               rot_z[2][2] = 1;
+    rot_z[0][0] = cos(C->rot[2]); rot_z[0][1] = -sin(C->rot[2]); rot_z[0][2] = 0;
+    rot_z[1][0] = sin(C->rot[2]); rot_z[1][1] = cos(C->rot[2]);  rot_z[1][2] = 0;
+    rot_z[2][0] = 0;              rot_z[2][1] = 0;               rot_z[2][2] = 1;
     
     /* combined rotation matrix
      * R = Rx(a) * Ry(b) * Rz(c) */
@@ -134,11 +134,11 @@ void camera_calc_direction(struct Camera C, int row, int col, double V[]) {
      * then add the camera's rotation to the vector by multiplying the vector
      * with the camera's rotation matrix:
      *
-     * |x'|     |x|
-     * |y'| = R |y| = R * V^T
-     * |z'|     |z|
+     * V = (x', y', z') 
      *
-     * V = (x', y', z') */
+     *       |x'|              |x|
+     * V^T = |y'| = R*V0^T = R*|y| 
+     *       |z'|              |z| */
 
     double unrotated_V[3][1], rotated_V[3][1];
 
