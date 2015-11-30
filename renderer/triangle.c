@@ -15,7 +15,7 @@ void triangle_create(double vertices[][3],
 
     double mat[][2] = {{ dot_product(T->Q1, T->Q1), dot_product(T->Q1, T->Q2) },
                        { dot_product(T->Q1, T->Q2), dot_product(T->Q2, T->Q2) }};
-    matrix_inverse(mat, T->M);
+    matrix_inverse_2x2(mat, T->M);
 
     T->D = -dot_product(T->N, T->P1);
 }
