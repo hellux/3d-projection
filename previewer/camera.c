@@ -6,7 +6,7 @@ struct Camera* camera_create(double pos[], double rot[], int res[],
     
     for (int i = 0; i < 3; i++) C->pos[i] = pos[i];
     for (int i = 0; i < 2; i++) {
-        C->rot[i] = fmod(rot[i], M_PI/2);
+        C->rot[i] = fmod(rot[i], M_PI*2);
         if (res[i] > 0) C->res[i] = res[i];
         else {
             fprintf(stderr, "previewer: invalid resolution -- %dx%dpx\n",

@@ -6,12 +6,12 @@ struct Bitmap* bitmap_create(int res[]) {
      B->width = res[0];
      B->height = res[1];
      B->pixels = malloc(sizeof(struct Pixel)*res[0]*res[1]);
-
+     
      return B;
 }
 
 struct Pixel* get_pixel(struct Bitmap* bitmap, size_t x, size_t y) {
-    return bitmap->pixels + bitmap->width * (bitmap->height-y) + x;
+    return bitmap->pixels + bitmap->width * (bitmap->height-y)+ x;
 }
 
 void set_pixel(struct Bitmap* bitmap, size_t x, size_t y, uint8_t col[]) {
@@ -35,7 +35,7 @@ bool save_bitmap_to_png(struct Bitmap *bitmap, char* png_file_path) {
         return false;
     }
     
-    /* Set image attributes. */
+    /* set image attributes */
     png_set_IHDR(png_ptr, info_ptr,
                  bitmap->width, bitmap->height,
                  PNG_BIT_DEPTH,
@@ -44,7 +44,7 @@ bool save_bitmap_to_png(struct Bitmap *bitmap, char* png_file_path) {
                  PNG_COMPRESSION_TYPE_DEFAULT,
                  PNG_FILTER_TYPE_DEFAULT);
     
-    /* Initialize rows of PNG. */
+    /* initialize rows of PNG */
     row_pointers = png_malloc(png_ptr, bitmap->height * sizeof(png_byte *));
     for (y = 0; y < bitmap->height; y++) {
         png_byte *row = png_malloc(png_ptr, 
@@ -58,7 +58,7 @@ bool save_bitmap_to_png(struct Bitmap *bitmap, char* png_file_path) {
         }
     }
 
-    /* Write the image data to "f_png". */
+    /* write the image data to file */
     png_init_io(png_ptr, f_png);
     png_set_rows(png_ptr, info_ptr, row_pointers);
     png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);

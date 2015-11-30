@@ -42,11 +42,11 @@ void calc_array_size(struct Camera* C) {
     /*     width
      * |-----------|   [m]
      *  ___________ _
-     *  \  |_|    / |
-     *   \   |   /  |
-     *    \  |  /   | focal length
-     *     \v| /    |
-     *      \|/     |
+     *  \  |_.    / |
+     *       .      |
+     *    \  .  /   | focal length
+     *      v.v     |
+     *      \./     |
      *       C      -
      *
      * tan(v) = opposite / adjacent
@@ -65,7 +65,7 @@ void calc_array_size(struct Camera* C) {
      * height = width * res_y / res_x */ 
 
     C->array_size[0] = tan(C->fov/2) * 2 * C->focal_length;
-    C->array_size[1] = C->array_size[0] * (C->res[1]/C->res[0]);
+    C->array_size[1] = C->array_size[0] * C->res[1] / C->res[0];
 }
 
 void calc_rotation_matrix(struct Camera* C) {

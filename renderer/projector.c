@@ -50,9 +50,9 @@ bool calc_ray_collision(double S[], double V[],
                         struct Triangle T, double P[]) {
     /* calculates coordinates where (point P) ray hits a triangle's plane
      * and returns true if P is inside the triangle */ 
-    bool plane_in_front_of_triangle = calc_collision_point_plane(S, V, T, P);
+    bool collides_with_plane = calc_collision_point_plane(S, V, T, P);
     bool point_in_triangle = calc_point_in_triangle(P, T);
-    return point_in_triangle && plane_in_front_of_triangle;
+    return collides_with_plane && point_in_triangle;
 }
 
 bool calc_collision_point_plane(double S[], double V[], 
@@ -61,8 +61,9 @@ bool calc_collision_point_plane(double S[], double V[],
      * P(t) = S + tV
      * where S is the starting point and V is the direction vector.
      * t is where the ray collides with a triangle's plane:
-     * t = -( N*S - N*T1 ) / ( N*V ) = -( N*S + D ) / ( N*V )
+     * t = -(N*S-N*T1)/(N*V) = -(N*S+D)/(N*V) = (-D-N*S)/(N*V)
      * N is the plane's normal
+     * D = -N*T1 becomes signed distance
      * T1 can be any vertex of the triangle */
     double numerator = -T.D - dot_product(T.N, S);
     double denominator = dot_product(T.N, V);
