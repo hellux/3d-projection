@@ -5,11 +5,11 @@
 #include <libconfig.h>
 
 #include "projector.h"
-#include "world.h"
-#include "camera.h"
+#include "../common/world.h"
+#include "../common/camera.h"
 
-#include "matrix.h"
-#include "vector.h"
+#include "../common/matrix.h"
+#include "../common/vector.h"
 
 bool config_parse(const char* cfg_path, struct World* world, struct Camera* camera);
 bool config_add_camera(config_t cfg, struct Camera* camera);
