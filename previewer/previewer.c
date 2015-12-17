@@ -94,7 +94,7 @@ void poll_events(SDL_Event* event,
             case SDL_WINDOWEVENT_RESIZED:
                 camera->res[0] = event->window.data1;
                 camera->res[1] = event->window.data2;
-                camera_calc_dimensions(camera);
+                camera_calc_array_size(camera);
                 break;
             }
             break;
@@ -151,6 +151,8 @@ void handle_controls(SDL_Window* window, struct Camera* camera) {
     if (key_states[SDL_SCANCODE_D]) { camera_move_right(camera); }
     if (key_states[SDL_SCANCODE_SPACE]) { camera_move_up(camera); }
     if (key_states[SDL_SCANCODE_LCTRL]) { camera_move_down(camera); }
+    if (key_states[SDL_SCANCODE_R]) { camera_decrease_fov(camera); }
+    if (key_states[SDL_SCANCODE_F]) { camera_increase_fov(camera); }
 }
 
 void render(SDL_Window* window,
@@ -158,170 +160,20 @@ void render(SDL_Window* window,
             struct World* world,
             struct Camera* camera,
             int *fps) {
-    /* clear screen */
-    SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
-    SDL_RenderClear(renderer);
-
-    /* render objects */
+    clear_render_screen(renderer, 0x00, 0x00, 0x00);
     camera_frame_update(camera, *fps);
-    PRJ_render(renderer, world, camera);
+    render_scene(renderer, world, camera);
+    update_surface(renderer, window);
+}
 
-    /* update the surface */
+void clear_render_screen(SDL_Renderer* renderer, uint8_t r, uint8_t g, uint8_t b) {
+    SDL_SetRenderDrawColor(renderer, r, g, b, 0xFF);
+    SDL_RenderClear(renderer);
+}
+
+void update_surface(SDL_Renderer* renderer, SDL_Window* window) {
     SDL_RenderPresent(renderer);
     SDL_UpdateWindowSurface(window);
-}
-
-bool config_parse(const char* cfg_path, struct World* world, struct Camera* camera) {
-    config_t cfg;
-    config_init(&cfg);
-
-    if (!config_read_file(&cfg, cfg_path)) {
-        fprintf(stderr, "previewer: %s:%d - %s\n", config_error_file(&cfg),
-                config_error_line(&cfg), config_error_text(&cfg));
-        config_destroy(&cfg);
-        fprintf(stderr, "previewer: could not parse config file '%s'\n", cfg_path);
-        return false;
-    }
-
-    bool valid_config = (config_add_camera(cfg, camera) &&
-                         config_add_objects(cfg, world));
-    config_destroy(&cfg);
-    /* return if the camera and at least one object was loaded successfully */
-    return valid_config;
-}
-
-bool config_add_camera(config_t cfg, struct Camera* camera) {
-    config_setting_t *stn_cam = config_lookup(&cfg, "camera");
-    if (stn_cam == NULL) {
-        fprintf(stderr, "previewer: camera settings not found\n");
-        return false;
-    }
-
-    double pos[] = {0, 0, 0}, rot[] = {0, 0, 0};
-    int res[2];
-    double fov, focal_length;
-
-    /* parse position, rotation and resolution */
-    config_setting_t* stn_pos = config_setting_lookup(stn_cam, "pos");
-    if (stn_pos != NULL) {
-        for (int i = 0; i < 3; i++) {
-            pos[i] = config_setting_get_float_elem(stn_pos, i);
-        }
-    }
-    config_setting_t* stn_rot = config_setting_lookup(stn_cam, "rot");
-    if (stn_rot != NULL) {
-        for (int i = 0; i < 3; i++) {
-            rot[i] = config_setting_get_float_elem(stn_rot, i);
-        }
-    }
-    config_setting_t* stn_res = config_setting_lookup(stn_cam, "res");
-    if (stn_res != NULL) {
-        for (int i = 0; i < 2; i++) {
-            res[i] = config_setting_get_int_elem(stn_res, i);
-        }
-    }
-
-    /* parse field of view and focal length */
-    config_setting_lookup_float(stn_cam, "fov", &fov);
-    config_setting_lookup_float(stn_cam, "focal_length", &focal_length);
-
-    /* create camera */
-    struct Camera* c = camera_create(pos, rot, res, fov, focal_length);
-    if (c == NULL) {
-        return false;
-    }
-    else {
-        *camera = *c;
-        return true;
-    }
-}
-
-bool config_add_objects(config_t cfg, struct World* world) {
-    config_setting_t *object_list;
-    bool has_objects = false;
-
-    /* create world struct */
-    *world = *world_create();
-
-    object_list = config_lookup(&cfg, "objects");
-    if (object_list != NULL) {
-        int count = config_setting_length(object_list);
-        for (int i = 0; i < count; i++) {
-            config_setting_t* object = config_setting_get_elem(object_list, i);
-            if (object != NULL) {
-                if (config_add_object(object, world)) has_objects = true;
-            }
-        }
-    }
-    return has_objects; /* at least one object loaded successfully */
-}
-
-bool config_add_object(config_setting_t* object, struct World* world) {
-    const char* obj_file_path;
-    double pos[3];
-    int light;
-
-    if (!config_setting_lookup_string(object, "path", &obj_file_path)) {
-        fprintf(stderr, "previewer: no path to model in object section\n");
-        return false;
-    }
-
-    config_setting_t* stn_pos = config_setting_lookup(object, "pos");
-    if (stn_pos != NULL) {
-        for (int i = 0; i < 3; i++) {
-            pos[i] = config_setting_get_float_elem(stn_pos, i);
-        }
-    }
-    config_setting_lookup_bool(object, "light", &light);
-
-    /* return if object was successfully added to world struct */
-    return world_add_object(world, obj_file_path, pos, (bool)light);
-}
-
-bool config_write_camera(const char* in_path,
-                         const char* out_path,
-                         struct Camera* camera) {
-    config_t cfg;
-    config_init(&cfg);
-        
-    if (!config_read_file(&cfg, in_path)) {
-        fprintf(stderr, "previewer: %s:%d - %s\n", config_error_file(&cfg),
-                config_error_line(&cfg), config_error_text(&cfg));
-        config_destroy(&cfg);
-        fprintf(stderr, "previewer: could not parse config file '%s'\n", in_path);
-        return false;
-    }
-
-    config_setting_t* stn_cam = config_lookup(&cfg, "camera");
-    if (stn_cam == NULL) {
-        fprintf(stderr, "renderer: camera settings not found\n");
-        return false;
-    }
-
-    config_setting_t* stn_pos = config_setting_lookup(stn_cam, "pos");
-    if (stn_pos != NULL) {
-        for (int i = 0; i < 3; i++) {
-            config_setting_set_float_elem(stn_pos, i, camera->pos[i]);
-        }
-    }
-    config_setting_t* stn_rot = config_setting_lookup(stn_cam, "rot");
-    if (stn_rot != NULL) {
-        for (int i = 0; i < 3; i++) {
-            config_setting_set_float_elem(stn_rot, i, camera->rot[i]);
-        }
-    }
-    
-    config_setting_set_float(config_setting_lookup(stn_cam, "fov"),
-                             camera->fov);
-    config_setting_set_float(config_setting_lookup(stn_cam, "focal_length"),
-                             camera->dims[2]);
-
-    if (!config_write_file(&cfg, out_path)) {
-        fprintf(stderr, "previewer: could not write config file to '%s'", out_path);
-        return false;
-    }
-
-    return true;   
 }
 
 SDL_Window* init_window(int resolution[]) {

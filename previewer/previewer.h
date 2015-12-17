@@ -6,11 +6,11 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include <libconfig.h>
 
 #include "projector.h"
-#include "camera.h"
-#include "world.h"
+#include "../common/config.h"
+#include "../common/camera.h"
+#include "../common/world.h"
 
 #define WINDOW_TITLE "Preview"
 
@@ -33,20 +33,11 @@ void render(SDL_Window* window,
             struct World* world,
             struct Camera* camera,
             int *fps);
-
-bool config_parse(const char* cfg_path, struct World* world, struct Camera* camera);
-bool config_add_camera(config_t cfg, struct Camera* camera);
-bool config_add_objects(config_t cfg, struct World* world);
-bool config_add_object(config_setting_t* object, struct World* world);
-bool config_write_camera(const char* input_cfg,
-                         const char* output_cfg,
-                         struct Camera* camera);
-
+void clear_render_screen(SDL_Renderer* renderer, uint8_t r, uint8_t g, uint8_t b);
+void update_surface(SDL_Renderer* renderer, SDL_Window* window);
 SDL_Window* init_window(int resolution[]);
 SDL_Renderer* init_renderer(SDL_Window* window, int resolution[]);
-
 void cleanup(SDL_Window* window,
              SDL_Renderer* renderer,
              struct Camera* camera);
-
 #endif
