@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile as part of the project
-OBJS = renderer.c projector.c ../common/vector.c ../common/matrix.c ../common/camera.c ../common/world.c ../common/triangle.c ../common/object.c ../common/image.c
+OBJS = renderer.c projector.c ../common/vector.c ../common/matrix.c ../common/camera.c ../common/config.c ../common/world.c ../common/triangle.c ../common/object.c ../common/image.c
 
 #CC specifies which compiler we're using
 CC = gcc
