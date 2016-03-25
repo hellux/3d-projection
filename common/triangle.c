@@ -12,6 +12,15 @@ void triangle_create(double vertices[][3],
     triangle_calc_signed_distance(T);
 }
 
+void triangle_set_color(struct Triangle* T, double light[]) {
+    double intensity = dot_product(T->normal, light) /
+                (magnitude(T->normal)*magnitude(light));
+    uint8_t hsl[3];
+    rgb_to_hsl(T->object->color, hsl);
+    hsl[2] = sqrt(pow(intensity, 2)) * 0xFF;
+    hsl_to_rgb(hsl, T->color);
+}
+
 void triangle_set_vertices(struct Triangle* T,
                            double vertices[][3],
                            int indices[]) {
@@ -52,5 +61,15 @@ void triangle_calc_signed_distance(struct Triangle* T) {
 
 void triangle_calc_camera_depth(struct Triangle* T, struct Camera* C) {
     T->depth = points_distance(C->pos, T->center);
+}
+
+int triangle_compare_depth(const void *t1, const void* t2) {
+    /* return
+     * z1 < z2 : 1
+     * z1 > z2 : -1
+     * z1 = z2 : 0 */
+    const struct Triangle** dt1 = (const struct Triangle**) t1;
+    const struct Triangle** dt2 = (const struct Triangle**) t2;
+    return ((*dt1)->depth < (*dt2)->depth) - ((*dt1)->depth > (*dt2)->depth);
 }
 
