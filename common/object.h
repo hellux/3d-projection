@@ -14,27 +14,25 @@
 #define OBJ_LINE_BUFFER_SIZE 128
 
 struct Object {
-    struct Triangle* tris;   /* array of pointers to triangle structs */
-    int tric;                /* amount of triangles */
+    struct Triangle* tris;
+    int tric;
     double verts[MAX_VERTICES][3];
-    bool* verts_rendered;
+    bool verts_in_front[MAX_VERTICES];
     double verts_2d[MAX_VERTICES][2];
     int vertc;
-    uint8_t color[3];        /* rgb color */
-    bool light;              /* is light source */
+    uint8_t color[3];
 };
 
 bool object_create(const char* obj_file_path,
                    double pos[],
                    uint8_t color[],
-                   bool light,
                    struct Object* O);
-void object_clear_2d_array(struct Object* O);
-bool load_obj_file(const char* file_path,
-                   int* vertexc, double vertices[][3],
-                   int* indexc, int indices[][3]);
-void parse_line(char* line_buffer,
-                int* vertexc, double vertices[][3],
-                int* indexc, int indices[][3]);
+void object_set_color(struct Object* O, uint8_t color[]);
+void object_adjust_position(struct Object* O, double pos[]);
+bool object_parse(struct Object* O, const char* obj_file_path, int indices[][3]);
+void object_parse_line(char* line_buffer,
+                       int* vertexc, double vertices[][3],
+                       int* indexc, int indices[][3]);
+void object_create_triangles(struct Object* O, int indices[][3]);
 
 #endif
