@@ -1,57 +1,21 @@
 #include "previewer.h"
 
 int main(int argc, char* args[]) {
-	/* handle config and arguments */
-	struct World world;
-	struct Camera camera;
 	char* config_path = "preview.cfg";
 	char* output_path = "render.cfg";
+    if (!handle_args(argc, args, &config_path, &output_path)) return EXIT_FAILURE;
 
-    for (int i = 1; i < argc; i++) {
-		char* arg = args[i];
-		if (arg[0] == '-') {
-			char option = arg[1];
-			switch (option) {
-			case 'c':
-				config_path = args[++i];
-                break;
-			case 'o':
-				output_path = args[++i];
-                break;
-			default:
-				fprintf(stderr, "previewer: invalid option -- '%c'\n", option);
-            }
-        }
-        else {
-            fprintf(stderr, "renderer: invalid argument -- '%s'\n", arg);
-            return EXIT_FAILURE;
-        }
-    }
-    if (!config_parse(config_path, &world, &camera)) {
-        return EXIT_FAILURE;
-    }
+	struct World world;
+	struct Camera camera;
+    if (!config_parse(config_path, &world, &camera)) return EXIT_FAILURE;
 
-	/* initiate SDL */
     SDL_Window* window = NULL;
     SDL_Renderer* renderer = NULL;
+    if (!init_sdl(&window, &renderer, camera.res)) return EXIT_FAILURE;
 
-    window = init_window(camera.res);
-	if (window == NULL) {
-		fprintf(stderr, "previewer: could not create window");
-		return EXIT_FAILURE;
-	}
-    renderer = init_renderer(window, camera.res);
-	if (renderer == NULL) {
-		fprintf(stderr, "previewer: could not create renderer");
-		return EXIT_FAILURE;
-	}
-    
-	/* run previewer */
     run_previewer(window, renderer, &world, &camera, config_path, output_path);
     
-	/* clean up */
     cleanup(window, renderer, &camera);
-
     return EXIT_SUCCESS;
 }
 
@@ -111,6 +75,9 @@ void poll_events(SDL_Event* event,
             case SDL_SCANCODE_LSHIFT:
                 camera_set_slow(camera, true);
                 break;
+            case SDL_SCANCODE_TAB:
+                camera_toggle_mode(camera);
+                break;
             case SDL_SCANCODE_F11:
                 toggle_fullscreen(window);
                 break;
@@ -153,6 +120,7 @@ void handle_controls(SDL_Window* window, struct Camera* camera) {
     if (key_states[SDL_SCANCODE_LCTRL]) { camera_move_down(camera); }
     if (key_states[SDL_SCANCODE_R]) { camera_decrease_fov(camera); }
     if (key_states[SDL_SCANCODE_F]) { camera_increase_fov(camera); }
+    if (key_states[SDL_SCANCODE_X]) { camera_stop(camera); }
 }
 
 void render(SDL_Window* window,
@@ -160,10 +128,20 @@ void render(SDL_Window* window,
             struct World* world,
             struct Camera* camera,
             int *fps) {
-    clear_render_screen(renderer, 0x00, 0x00, 0x00);
+    clear_render_screen(renderer, 0xFF, 0xFF, 0xFF);
     camera_frame_update(camera, *fps);
-    render_scene(renderer, world, camera);
+    painters_render_scene(renderer, world, camera);
     update_surface(renderer, window);
+}
+
+void draw_bitmap(SDL_Renderer* renderer, struct Bitmap* bitmap) {
+    for (int y = 0; y < bitmap->height; y++) {
+        for (int x = 0; x < bitmap->width; x++) {
+            struct Pixel* p = bitmap_get_pixel(bitmap, x, y);
+            SDL_SetRenderDrawColor(renderer, p->red, p->green, p->blue, 0xFF);
+            SDL_RenderDrawPoint(renderer, x, y);
+        }
+    }
 }
 
 void clear_render_screen(SDL_Renderer* renderer, uint8_t r, uint8_t g, uint8_t b) {
@@ -176,6 +154,43 @@ void update_surface(SDL_Renderer* renderer, SDL_Window* window) {
     SDL_UpdateWindowSurface(window);
 }
 
+bool handle_args(int argc, char* args[], char** config_path, char** output_path) {
+    for (int i = 1; i < argc; i++) {
+		char* arg = args[i];
+		if (arg[0] == '-') {
+			char option = arg[1];
+			switch (option) {
+			case 'c':
+				*config_path = args[++i];
+                break;
+			case 'o':
+				*output_path = args[++i];
+                break;
+			default:
+				fprintf(stderr, "previewer: invalid option -- '%c'\n", option);
+            }
+        }
+        else {
+            fprintf(stderr, "renderer: invalid argument -- '%s'\n", arg);
+            return false;
+        }
+    }
+    return true;
+}
+
+bool init_sdl(SDL_Window** window, SDL_Renderer** renderer, int res[]) {
+    *window = init_window(res);
+	if (*window == NULL) {
+		fprintf(stderr, "previewer: could not create window");
+		return false;
+	}
+    *renderer = init_renderer(*window, res);
+	if (*renderer == NULL) {
+		fprintf(stderr, "previewer: could not create renderer");
+		return false;
+	}
+    return true;
+}
 SDL_Window* init_window(int resolution[]) {
     SDL_Log("Initializing SDL %s. %s\n",
             (SDL_Init(SDL_INIT_VIDEO) == 0 ? "succeeded" : "failed"),
