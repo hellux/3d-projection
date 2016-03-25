@@ -14,7 +14,19 @@ bool config_parse(const char* cfg_path, struct World* world, struct Camera* came
 
     bool valid_config = (config_read_camera(cfg, camera) &&
                          config_read_objects(cfg, world));
+    if (valid_config) {
+        for (int o = 0; o < world->object_count; o++) {
+            for (int t = 0; t < world->objects[o].tric; t++) {
+                triangle_set_color(&world->objects[o].tris[t], camera->light);
+            }   
+        } 
+    }
     config_destroy(&cfg);
+
+    printf("Objects: %d\n", world->object_count);
+    printf("Triangles: %d\n", world->triangle_count);
+    printf("Resolution: %dx%d\n", camera->res[0], camera->res[1]);
+
     /* return if the camera and at least one object was loaded successfully */
     return valid_config;
 }
@@ -26,7 +38,7 @@ bool config_read_camera(config_t cfg, struct Camera* camera) {
         return false;
     }
 
-    double pos[] = {0, 0, 0}, rot[] = {0, 0, 0};
+    double pos[] = {0, 0, 0}, rot[] = {0, 0, 0}, light[] = {0, 0, 0};
     int res[2];
     double fov, focal_length;
 
@@ -49,13 +61,19 @@ bool config_read_camera(config_t cfg, struct Camera* camera) {
             res[i] = config_setting_get_int_elem(stn_res, i);
         }
     }
+    config_setting_t* stn_lgt = config_setting_lookup(stn_cam, "light");
+    if (stn_lgt != NULL) {
+        for (int i = 0; i < 3; i++) {
+            light[i] = config_setting_get_float_elem(stn_lgt, i);
+        }
+    }
 
     /* parse field of view and focal length */
     config_setting_lookup_float(stn_cam, "fov", &fov);
     config_setting_lookup_float(stn_cam, "focal_length", &focal_length);
 
     /* create camera */
-    struct Camera* c = camera_create(pos, rot, res, fov, focal_length);
+    struct Camera* c = camera_create(pos, rot, res, fov, focal_length, light);
     if (c == NULL) {
         return false;
     }
@@ -89,7 +107,6 @@ bool config_read_object(config_setting_t* object, struct World* world) {
     const char* obj_file_path;
     double pos[3];
     uint8_t col[3];
-    int light;
 
     if (!config_setting_lookup_string(object, "path", &obj_file_path)) {
         fprintf(stderr, "previewer: no path to model in object section\n");
@@ -108,10 +125,9 @@ bool config_read_object(config_setting_t* object, struct World* world) {
             col[i] = config_setting_get_int_elem(stn_col, i);
         }
     }
-    config_setting_lookup_bool(object, "light", &light);
 
     /* return if object was successfully added to world struct */
-    return world_add_object(world, obj_file_path, pos, col, (bool)light);
+    return world_add_object(world, obj_file_path, pos, col);
 }
 
 bool config_write_camera(const char* in_path,
@@ -144,6 +160,12 @@ bool config_write_camera(const char* in_path,
     if (stn_rot != NULL) {
         for (int i = 0; i < 3; i++) {
             config_setting_set_float_elem(stn_rot, i, camera->rot[i]);
+        }
+    }
+    config_setting_t* stn_lgt = config_setting_lookup(stn_cam, "light");
+    if (stn_lgt != NULL) {
+        for (int i = 0; i < 3; i++) {
+            config_setting_set_float_elem(stn_lgt, i, camera->light[i]);
         }
     }
 
