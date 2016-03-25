@@ -21,10 +21,11 @@ struct World {
 };
 
 struct World* world_create();
+void world_allocate_memory_objects(struct World* W);
+void world_allocate_memory_triangles(struct World* W);
 bool world_add_object(struct World* W,
                       const char* obj_file_path,
                       double pos[],
-                      uint8_t color[],
-                      bool light);
+                      uint8_t color[]);
 
 #endif
