@@ -23,8 +23,9 @@ struct Bitmap {
 };
 
 struct Bitmap* bitmap_create(int res[]);
-struct Pixel* get_pixel(struct Bitmap* bitmap, size_t x, size_t y);
-void set_pixel(struct Bitmap* bitmap, size_t x, size_t y, uint8_t col[]);
-bool save_bitmap_to_png(struct Bitmap *bitmap, char* png_file_path);
+struct Pixel* bitmap_get_pixel(struct Bitmap* bitmap, size_t x, size_t y);
+void bitmap_set_pixel(struct Bitmap* bitmap, size_t x, size_t y, uint8_t col[]);
+bool bitmap_save_png(struct Bitmap* bitmap, char* png_file_path);
+void bitmap_free(struct Bitmap* bitmap);
 
 #endif

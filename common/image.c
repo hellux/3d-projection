@@ -2,25 +2,23 @@
 
 struct Bitmap* bitmap_create(int res[]) {
      struct Bitmap* B = malloc(sizeof(struct Bitmap));
-
      B->width = res[0];
      B->height = res[1];
      B->pixels = malloc(sizeof(struct Pixel)*res[0]*res[1]);
-     
      return B;
 }
 
-struct Pixel* get_pixel(struct Bitmap* bitmap, size_t x, size_t y) {
+struct Pixel* bitmap_get_pixel(struct Bitmap* bitmap, size_t x, size_t y) {
     return bitmap->pixels + bitmap->width * (bitmap->height-y)+ x;
 }
 
-void set_pixel(struct Bitmap* bitmap, size_t x, size_t y, uint8_t col[]) {
-    get_pixel(bitmap, x, bitmap->height-y)->red = col[0];
-    get_pixel(bitmap, x, bitmap->height-y)->green = col[1];
-    get_pixel(bitmap, x, bitmap->height-y)->blue = col[2];
+void bitmap_set_pixel(struct Bitmap* bitmap, size_t x, size_t y, uint8_t col[]) {
+    bitmap_get_pixel(bitmap, x, bitmap->height-y)->red = col[0];
+    bitmap_get_pixel(bitmap, x, bitmap->height-y)->green = col[1];
+    bitmap_get_pixel(bitmap, x, bitmap->height-y)->blue = col[2];
 }
 
-bool save_bitmap_to_png(struct Bitmap *bitmap, char* png_file_path) {
+bool bitmap_save_png(struct Bitmap *bitmap, char* png_file_path) {
     FILE* f_png;
     png_structp png_ptr = NULL;
     png_infop info_ptr = NULL;
@@ -51,7 +49,7 @@ bool save_bitmap_to_png(struct Bitmap *bitmap, char* png_file_path) {
                                    sizeof(uint8_t)*bitmap->width*PIXEL_SIZE);
         row_pointers[y] = row;
         for (x = 0; x < bitmap->width; x++) {
-            struct Pixel* pixel = get_pixel(bitmap, x, y);
+            struct Pixel* pixel = bitmap_get_pixel(bitmap, x, y);
             *row++ = pixel->red;
             *row++ = pixel->green;
             *row++ = pixel->blue;
@@ -72,4 +70,9 @@ bool save_bitmap_to_png(struct Bitmap *bitmap, char* png_file_path) {
     fclose(f_png);
 
     return true;
+}
+
+void bitmap_free(struct Bitmap* bitmap) {
+    free(bitmap->pixels);
+    free(bitmap);
 }
