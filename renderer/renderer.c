@@ -31,5 +31,5 @@ int main(int argc, char* args[]) {
     
     bitmap = *projector_render(world, camera);
     
-    return save_bitmap_to_png(&bitmap, output_path) ? EXIT_SUCCESS : EXIT_FAILURE;
+    return bitmap_save_png(&bitmap, output_path) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

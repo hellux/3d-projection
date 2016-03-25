@@ -4,19 +4,12 @@ struct Bitmap* projector_render(struct World W, struct Camera C) {
     struct Bitmap* bitmap = bitmap_create(C.res);
     
     printf("\n");
-
-    printf("Objects to render: %d\n", W.object_count);
-    printf("Resolution: %dx%d\n", C.res[0], C.res[1]);
-    printf("Camera position: %f, %f, %f\n", C.pos[0], C.pos[1], C.pos[2]);
-    printf("Camera rotation: %f, %f, %f\n", C.rot[0], C.rot[1], C.rot[2]);
-
-    printf("\n");
     for (int row = 0; row < C.res[1]; row++) {
         for (int col = 0; col < C.res[0]; col++) {
             print_progress_bar((double)(row*C.res[0]+col)/(C.res[0]*C.res[1]));
             uint8_t pixel_color[3];
             calc_pixel_color(W, C, row, col, pixel_color);
-            set_pixel(bitmap, col, row, pixel_color);
+            bitmap_set_pixel(bitmap, col, row, pixel_color);
         }
     }
     printf("\n");
@@ -40,13 +33,13 @@ void calc_pixel_color(struct World W,
                                                    pixel_vector,
                                                    W.objects[ob].tris[tr]);
             if (t > 0 && (t < depth || depth == 0)) {
-                surface_color = W.objects[ob].color;
+                surface_color = W.objects[ob].tris[tr].color;
                 depth = t;
             }
         }
     }
     if (depth == 0) {
-        for (int i = 0; i < 3; i++) color[i] = 0;
+        for (int i = 0; i < 3; i++) color[i] = 0xFF;
     }
     else {
         for (int i = 0; i < 3; i++) color[i] = surface_color[i];

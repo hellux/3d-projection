@@ -1,20 +1,12 @@
 #ifndef projector_h
 #define projector_h
 
-#include <stdio.h>
-#include <stdlib.h>
-
-/* log and trig */
-#include <math.h>
-
-/* get time for eta */
-#include <time.h>
-
-/* uint8_t type */
-#include <stdint.h>
-
-/* bool type */
-#include <stdbool.h>
+#include <stdio.h> /* printf */
+#include <stdlib.h> /* memory allocation */
+#include <stdint.h> /* uint8_t type for colors */
+#include <stdbool.h> /* bool type */
+#include <math.h> /* log and trig */
+#include <time.h> /* get time for eta */
 
 #include "../common/world.h"
 #include "../common/object.h"
