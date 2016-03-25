@@ -1,15 +1,15 @@
 #OBJS specifies which files to compile as part of the project
-OBJS = previewer.c projector.c ../common/config.c ../common/camera.c ../common/matrix.c ../common/object.c ../common/triangle.c ../common/vector.c ../common/world.c
+OBJS = previewer.c projector.c ../common/config.c ../common/camera.c ../common/image.c ../common/color.c ../common/matrix.c ../common/object.c ../common/triangle.c ../common/vector.c ../common/world.c
 
 #CC specifies which compiler we're using
 CC = gcc
 
 #COMPILER_FLAGS specifies the additional compilation options we're using
 # -w suppresses all warnings
-COMPILER_FLAGS = -Wall
+COMPILER_FLAGS = -Wall -g
 #
 #  #LINKER_FLAGS specifies the libraries we're linking against
-LINKER_FLAGS = -lSDL2 -lm -lconfig
+LINKER_FLAGS = -lSDL2 -lm -lconfig -lpng
 
 #OBJ_NAME specifies the name of our exectuable
 OBJ_NAME = ../preview
