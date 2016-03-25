@@ -4,7 +4,8 @@
 
 void vector_add(double u[], double v[], double w[]) {
     /* w = u + v */
-    for (int i = 0; i < 3; i++) w[i] = u[i] + v[i];
+    for (int i = 0; i < 3; i++)
+        w[i] = u[i] + v[i];
 }
 
 void vector_subtract(double u[], double v[], double w[]) {
@@ -69,11 +70,26 @@ bool normal_faces_point(double N[], double P[], double S[]) {
      * return |D| < |D_inv| */
 
     double A[3], A_n[3], magD, magD_n;
-    vector_add(P, N, A);                /* A = P + N */
+    vector_add(P, N, A);
     vector_subtract(P, N, A_n);         /* A_n = P - N */
     magD = points_distance(A, S);       /* |D|: distance between A, S */
     magD_n = points_distance(A_n, S);   /* |D_n|: distance between A_n, S */
     return magD < magD_n;               /* |D| < |D_n| */
+}
+
+void vector_rotate(double rotation_matrix[][3], double u[]) {
+    double mat_u[][1] = {{u[0]},
+                         {u[1]},
+                         {u[2]}};
+    double mat_u_res[3][1];
+
+    matrix_product(3, 3, rotation_matrix,
+                   3, 1, mat_u,
+                   mat_u_res);
+
+    u[0] = mat_u_res[0][0];
+    u[1] = mat_u_res[1][0];
+    u[2] = mat_u_res[2][0];
 }
 
 void vector_print(double u[]) {
