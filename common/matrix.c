@@ -7,7 +7,10 @@ void matrix_product(size_t rows_A, size_t cols_A, double A[][cols_A],
     /* Matrix product:
      * C = A*B */
     
-    if (cols_A != rows_B) fprintf(stderr, "Matrices can't multiply!\n");
+    if (cols_A != rows_B) {
+        fprintf(stderr, "Matrices can't multiply!\n");
+        return;
+    }
     for (int i = 0; i < rows_A; i++) {
         for (int j = 0; j < cols_B; j++) {
             C[i][j] = 0;
@@ -30,7 +33,7 @@ void matrix_scalar(double m,
 
 void matrix_inverse_2x2(double A[][2], double B[][2]) {
     /* B = A^-1, A must be a 2x2 matrix:
-     * C is the adjugate of A
+     * C is the cofactor adjugate of A
      *  A = | a b |     C = | d -b |
      *      | c d |         | -c a |
      *
@@ -111,6 +114,36 @@ void matrix_inverse_3x3(double A[][3], double B[][3]) {
         fprintf(stderr, "renderer: inverse of 3x3 matrix does not exist\n");
         matrix_print(3, 3, A);
     }
+}
+
+void matrix_rotation_x(double cos_c, double sin_c, double R[][3]) {
+    /* rotation matrix for x axis (yaw):
+     *         | 1   0      0       |
+     * Rx(c) = | 0   cos(c) -sin(c) |
+     *         | 0   sin(c) cos(c)  | */
+    R[0][0] = 1; R[0][1] = 0;     R[0][2] = 0;
+    R[1][0] = 0; R[1][1] = cos_c; R[1][2] = -sin_c;
+    R[2][0] = 0; R[2][1] = sin_c; R[2][2] = cos_c;
+}
+
+void matrix_rotation_y(double cos_b, double sin_b, double R[][3]) {
+    /* rotation matrix for y axis (pitch)
+     *         | cos(b)  0   sin(b) |
+     * Ry(b) = | 0       1   0      |
+     *         | -sin(b) 0   cos(b) | */
+    R[0][0] = cos_b;  R[0][1] = 0; R[0][2] = sin_b;
+    R[1][0] = 0;      R[1][1] = 1; R[1][2] = 0;
+    R[2][0] = -sin_b; R[2][1] = 0; R[2][2] = cos_b;
+}
+
+void matrix_rotation_z(double cos_a, double sin_a, double R[][3]) {
+    /* rotation matrix for z axis (roll)
+     *         | cos(a) -sin(a) 0 |
+     * Rz(a) = | sin(a) cos(a)  0 |
+     *         | 0      0       1 | */
+    R[0][0] = cos_a; R[0][1] = -sin_a; R[0][2] = 0;
+    R[1][0] = sin_a; R[1][1] = cos_a;  R[1][2] = 0;
+    R[2][0] = 0;     R[2][1] = 0;      R[2][2] = 1;
 }
 
 void matrix_print(size_t rows_A, size_t cols_A, double A[][cols_A]) {
