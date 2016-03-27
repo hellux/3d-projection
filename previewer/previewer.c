@@ -1,12 +1,13 @@
 #include "previewer.h"
 
 int main(int argc, char* args[]) {
-	char* config_path = "preview.cfg";
-	char* output_path = "render.cfg";
-    if (!handle_args(argc, args, &config_path, &output_path)) return EXIT_FAILURE;
+    char* config_path = "render.cfg";
+    char* output_path = "render.cfg";
+    int arg_status = handle_args(argc, args, &config_path, &output_path);
+    if (arg_status != CONTINUE) return arg_status;
 
-	struct World world;
-	struct Camera camera;
+    struct World world;
+    struct Camera camera;
     if (!config_parse(config_path, &world, &camera)) return EXIT_FAILURE;
 
     SDL_Window* window = NULL;
@@ -155,41 +156,55 @@ void update_surface(SDL_Renderer* renderer, SDL_Window* window) {
     SDL_UpdateWindowSurface(window);
 }
 
-bool handle_args(int argc, char* args[], char** config_path, char** output_path) {
+int handle_args(int argc, char* args[], char** config_path, char** output_path) {
+    bool success = true;
     for (int i = 1; i < argc; i++) {
-		char* arg = args[i];
-		if (arg[0] == '-') {
-			char option = arg[1];
-			switch (option) {
-			case 'c':
-				*config_path = args[++i];
+        char* arg = args[i];
+        if (arg[0] == '-') {
+            char option = arg[1];
+            switch (option) {
+            case 'c':
+                *config_path = args[++i];
                 break;
-			case 'o':
-				*output_path = args[++i];
+            case 'o':
+                *output_path = args[++i];
                 break;
-			default:
-				fprintf(stderr, "previewer: invalid option -- '%c'\n", option);
+            case 'h':
+                printf("Usage: preview [options..]\n"
+    "Options:\n"
+    "-c <config_path>    specify input config file [default: render.cfg].\n"
+    "-o <output_path>    specify output config file [default: render.cfg].\n"
+    "-h                  print this help screen.\n");
+                return EXIT_SUCCESS;
+                break;
+            default:
+                fprintf(stderr, "previewer: invalid option -- '%c'\n", option);
+                success = false;
             }
         }
         else {
-            fprintf(stderr, "renderer: invalid argument -- '%s'\n", arg);
-            return false;
+            fprintf(stderr, "previewer: invalid argument -- '%s'\n", arg);
+            success = false;
         }
     }
-    return true;
+    if (success) return CONTINUE;
+    else {
+        printf("Try 'preview -h' for more information");
+        return EXIT_FAILURE;
+    }
 }
 
 bool init_sdl(SDL_Window** window, SDL_Renderer** renderer, int res[]) {
     *window = init_window(res);
-	if (*window == NULL) {
-		fprintf(stderr, "previewer: could not create window");
-		return false;
-	}
+    if (*window == NULL) {
+        fprintf(stderr, "previewer: could not create window");
+        return false;
+    }
     *renderer = init_renderer(*window, res);
-	if (*renderer == NULL) {
-		fprintf(stderr, "previewer: could not create renderer");
-		return false;
-	}
+    if (*renderer == NULL) {
+        fprintf(stderr, "previewer: could not create renderer");
+        return false;
+    }
     return true;
 }
 SDL_Window* init_window(int resolution[]) {

@@ -13,6 +13,7 @@
 #include "../common/world.h"
 
 #define WINDOW_TITLE "Preview"
+#define CONTINUE 2
 
 void run_previewer(SDL_Window* window,
                    SDL_Renderer* renderer,
@@ -36,7 +37,7 @@ void render(SDL_Window* window,
 void draw_bitmap(SDL_Renderer* renderer, struct Bitmap* bitmap);
 void clear_render_screen(SDL_Renderer* renderer, uint8_t r, uint8_t g, uint8_t b);
 void update_surface(SDL_Renderer* renderer, SDL_Window* window);
-bool handle_args(int argc, char* args[], char** config_path, char** output_path);
+int handle_args(int argc, char* args[], char** config_path, char** output_path);
 bool init_sdl(SDL_Window** window, SDL_Renderer** renderer, int res[]);
 SDL_Window* init_window(int resolution[]);
 SDL_Renderer* init_renderer(SDL_Window* window, int resolution[]);
