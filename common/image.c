@@ -13,9 +13,9 @@ struct Pixel* bitmap_get_pixel(struct Bitmap* bitmap, size_t x, size_t y) {
 }
 
 void bitmap_set_pixel(struct Bitmap* bitmap, size_t x, size_t y, uint8_t col[]) {
-    bitmap_get_pixel(bitmap, x, bitmap->height-y)->red = col[0];
-    bitmap_get_pixel(bitmap, x, bitmap->height-y)->green = col[1];
-    bitmap_get_pixel(bitmap, x, bitmap->height-y)->blue = col[2];
+    bitmap_get_pixel(bitmap, x, bitmap->height-y-1)->red = col[0];
+    bitmap_get_pixel(bitmap, x, bitmap->height-y-1)->green = col[1];
+    bitmap_get_pixel(bitmap, x, bitmap->height-y-1)->blue = col[2];
 }
 
 bool bitmap_save_png(struct Bitmap *bitmap, char* png_file_path) {
