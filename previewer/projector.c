@@ -171,18 +171,17 @@ void render_hori_line(SDL_Renderer* renderer, int x1, int x2, int y) {
 }
 
 void transform_point(struct Camera* C, double P[], double point_2d[]) {
-    /*
-    double D[3];
 
+    double D[3];
     vector_subtract(P, C->pos, D);
-    vector_rotate(C->rotation_matrix_rev, D);
+    vector_transform(C->rotation_matrix_inv, D);
 
     point_2d[0] = C->res[0] / 2 + (D[0]*C->res[0]) / (D[2]*C->array_width) *
             C->focal_length;
     point_2d[1] = C->res[1] / 2 - (D[1]*C->res[1]) / (D[2]*C->array_height) *
             C->focal_length;
-    */
 
+    /*
     double X = P[0] - C->pos[0];
     double Y = P[1] - C->pos[1];
     double Z = P[2] - C->pos[2];
@@ -197,4 +196,5 @@ void transform_point(struct Camera* C, double P[], double point_2d[]) {
             C->focal_length);
     point_2d[1] = (C->res[1] / 2 - (dy*C->res[1]) / (dz*C->array_height) *
             C->focal_length);
+   */
 }
