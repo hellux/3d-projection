@@ -119,17 +119,7 @@ void camera_calc_rotation_matrix(struct Camera* C) {
     matrix_product(3, 3, rot_z_rot_y,
                    3, 3, rot_x,
                    C->rotation_matrix);
-
-    matrix_rotation_x(C->frame_cos_rev[0], C->frame_sin_rev[0], rot_x);
-    matrix_rotation_y(C->frame_cos_rev[1], C->frame_sin_rev[1], rot_y);
-    matrix_rotation_z(C->frame_cos_rev[2], C->frame_sin_rev[2], rot_z);
-
-    matrix_product(3, 3, rot_z,
-                   3, 3, rot_y,
-                   rot_z_rot_y);
-    matrix_product(3, 3, rot_z_rot_y,
-                   3, 3, rot_x,
-                   C->rotation_matrix_rev);
+    matrix_inverse_3x3(C->rotation_matrix, C->rotation_matrix_inv);
 }
 
 void camera_calc_pixel_direction(struct Camera C, int row, int col, double V[]) {
@@ -237,17 +227,15 @@ void camera_rotate(struct Camera* C, int x, int y) {
     C->rot[1] = fmod(C->rot[1] + x*MOUSE_SENSITIVITY, M_PI*2);
 }
 
-void camera_frame_update(struct Camera* C, int fps) {
+void camera_frame_update(struct Camera* C, double period) {
     camera_update_rotation(C);
-    camera_update_position(C, fps);
+    camera_update_position(C, period);
 }
 
 void camera_update_rotation(struct Camera* C) {
     for (int i = 0; i < 3; i++) {
         C->frame_cos[i] = cos(C->rot[i]);
         C->frame_sin[i] = sin(C->rot[i]);
-        C->frame_cos_rev[i] = C->frame_cos[i]; /* cos(-a) = cos(a) */
-        C->frame_sin_rev[i] = -C->frame_sin[i]; /* sin(-a) = -sin(a) */
     }
     camera_calc_rotation_matrix(C);
     static double camera_dir_unrotated[3][1] = {{0},{0}, {1}};
@@ -259,12 +247,11 @@ void camera_update_rotation(struct Camera* C) {
     C->signed_distance = -dot_product(C->direction, C->pos);
 }
 
-void camera_update_position(struct Camera* C, int fps) {
-    fps++;
+void camera_update_position(struct Camera* C, double period) {
     for (int i = 0; i < 3; i++) {
-        C->vel[i] += C->acc[i]/(fps);
+        C->vel[i] += C->acc[i]*period;
         C->vel[i] *= CAMERA_VELOCITY_LOSS;
-        C->pos[i] += C->vel[i]/(fps);
+        C->pos[i] += C->vel[i]*period;
     }
 }
 

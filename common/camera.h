@@ -32,14 +32,12 @@ struct Camera {
     double light[3];
     double pixel_size;
     double rotation_matrix[3][3];
-    double rotation_matrix_rev[3][3];
+    double rotation_matrix_inv[3][3];
 
     int mode;
     bool slow;
     double frame_cos[3];
     double frame_sin[3];
-    double frame_cos_rev[3];
-    double frame_sin_rev[3];
 };
 
 struct Camera* camera_create(double pos[], double rot[], int res[], 
@@ -69,9 +67,9 @@ void camera_move_horizontal(struct Camera* C, double d, double v );
 void camera_move_vertical(struct Camera* C, double d );
 void camera_accelerate(struct Camera* C, int i, double a);
 void camera_rotate(struct Camera* C, int u, int v);
-void camera_frame_update(struct Camera* C, int fps);
+void camera_frame_update(struct Camera* C, double period);
 void camera_update_rotation(struct Camera* C);
-void camera_update_position(struct Camera* C, int fps);
+void camera_update_position(struct Camera* C, double period);
 int camera_toggle_mode(struct Camera* C);
 
 #endif
