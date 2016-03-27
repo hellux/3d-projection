@@ -77,13 +77,13 @@ bool normal_faces_point(double N[], double P[], double S[]) {
     return magD < magD_n;               /* |D| < |D_n| */
 }
 
-void vector_rotate(double rotation_matrix[][3], double u[]) {
+void vector_transform(double matrix[][3], double u[]) {
     double mat_u[][1] = {{u[0]},
                          {u[1]},
                          {u[2]}};
     double mat_u_res[3][1];
 
-    matrix_product(3, 3, rotation_matrix,
+    matrix_product(3, 3, matrix,
                    3, 1, mat_u,
                    mat_u_res);
 
