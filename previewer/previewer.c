@@ -26,18 +26,19 @@ void run_previewer(SDL_Window* window,
                    const char* input,
                    const char* output) {
     bool quit = false;
-    int fps = 1000;
-    Uint64 tick = 0;
+    double period = 0;
+    unsigned int tick = 0;
     SDL_Event event;
     SDL_PollEvent(&event);
 
     while (!quit)  {
         poll_events(&event, window, camera, input, output, &quit);
         handle_controls(window, camera);
-        render(window, renderer, world, camera, &fps);
+        render(window, renderer, world, camera, period);
 
-        fps = SDL_GetPerformanceFrequency()/(SDL_GetPerformanceCounter()-tick);
-        tick = SDL_GetPerformanceCounter();
+        period = (SDL_GetTicks()-tick)/1000.0;
+        tick = SDL_GetTicks();
+        printf("T=%f\n", period);
     }
 }
 
@@ -127,9 +128,9 @@ void render(SDL_Window* window,
             SDL_Renderer* renderer,
             struct World* world,
             struct Camera* camera,
-            int *fps) {
+            double period) {
     clear_render_screen(renderer, 0xFF, 0xFF, 0xFF);
-    camera_frame_update(camera, *fps);
+    camera_frame_update(camera, period);
     painters_render_scene(renderer, world, camera);
     update_surface(renderer, window);
 }

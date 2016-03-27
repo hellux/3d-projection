@@ -32,7 +32,7 @@ void render(SDL_Window* window,
             SDL_Renderer* renderer,
             struct World* world,
             struct Camera* camera,
-            int *fps);
+            double fps);
 void draw_bitmap(SDL_Renderer* renderer, struct Bitmap* bitmap);
 void clear_render_screen(SDL_Renderer* renderer, uint8_t r, uint8_t g, uint8_t b);
 void update_surface(SDL_Renderer* renderer, SDL_Window* window);
