@@ -39,7 +39,6 @@ void run_previewer(SDL_Window* window,
 
         period = (SDL_GetTicks()-tick)/1000.0;
         tick = SDL_GetTicks();
-        printf("T=%f\n", period);
     }
 }
 
