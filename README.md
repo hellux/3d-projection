@@ -1,4 +1,5 @@
 # 3D-projection
+![](https://github.com/hellux/3d-projection/examples/suzanne/suz_render.png "Render of Suzanne")
 Experiment to render 3D objects onto a 2D surface. Previewer and renderer written in C. Previewer uses the SDL library to draw the projection in real time. Renderer uses the libpng library to produce an output image.
 
 #### Previewer
