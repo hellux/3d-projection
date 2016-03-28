@@ -74,7 +74,7 @@ void render_triangle(SDL_Renderer* renderer, struct Camera* C, struct Triangle* 
 
 void render_fill_triangle(SDL_Renderer* renderer, int res[],
                           double v1[], double v2[], double v3[]) {
-	static int** contour_x;
+    static int** contour_x;
     static int res_y = 0;
     if (res_y != res[1]) {
         res_y = res[1];
@@ -83,84 +83,84 @@ void render_fill_triangle(SDL_Renderer* renderer, int res[],
             contour_x[i] = malloc(2 * sizeof(int));
         }
     }
-	
-	int y;
+    
+    int y;
 
-	for (y = 0; y < res[1]; y++)	{
-		contour_x[y][0] = INT_MAX;
-		contour_x[y][1] = INT_MIN;
-	}
+    for (y = 0; y < res[1]; y++)    {
+        contour_x[y][0] = INT_MAX;
+        contour_x[y][1] = INT_MIN;
+    }
 
-	triangle_scan_line((int)v1[0], (int)v1[1], (int)v2[0], (int)v2[1],
+    triangle_scan_line((int)v1[0], (int)v1[1], (int)v2[0], (int)v2[1],
                        contour_x, res);
-	triangle_scan_line((int)v2[0], (int)v2[1], (int)v3[0], (int)v3[1],
+    triangle_scan_line((int)v2[0], (int)v2[1], (int)v3[0], (int)v3[1],
                        contour_x, res);
-	triangle_scan_line((int)v3[0], (int)v3[1], (int)v1[0], (int)v1[1],
+    triangle_scan_line((int)v3[0], (int)v3[1], (int)v1[0], (int)v1[1],
                        contour_x, res);
 
-	for (y = 0; y < res[1]; y++)	{
-		if (contour_x[y][1] >= contour_x[y][0]) {
-			render_hori_line(renderer, contour_x[y][0], contour_x[y][1]+1, y);
-		}
-	}
+    for (y = 0; y < res[1]; y++)    {
+        if (contour_x[y][1] >= contour_x[y][0]) {
+            render_hori_line(renderer, contour_x[y][0], contour_x[y][1]+1, y);
+        }
+    }
 }
 
 void triangle_scan_line(int x1, int y1,
-					    int x2, int y2,
-						int** contour_x, int res[]) {
-	int sx, sy, dx1, dy1, dx2, dy2, x, y, m, n, k, cnt;
+                        int x2, int y2,
+                        int** contour_x, int res[]) {
+    int sx, sy, dx1, dy1, dx2, dy2, x, y, m, n, k, cnt;
 
-	sx = x2 - x1;
-	sy = y2 - y1;
+    sx = x2 - x1;
+    sy = y2 - y1;
 
-	if (sy < 0 || (sy == 0 && sx < 0)) {
-		k = x1; x1 = x2; x2 = k;
-		k = y1; y1 = y2; y2 = k;
-		sx = -sx;
-		sy = -sy;
-	}
+    if (sy < 0 || (sy == 0 && sx < 0)) {
+        k = x1; x1 = x2; x2 = k;
+        k = y1; y1 = y2; y2 = k;
+        sx = -sx;
+        sy = -sy;
+    }
 
-	if (sx > 0) dx1 = 1;
-	else if (sx < 0) dx1 = -1;
-	else dx1 = 0;
+    if (sx > 0) dx1 = 1;
+    else if (sx < 0) dx1 = -1;
+    else dx1 = 0;
 
-	if (sy > 0) dy1 = 1;
-	else if (sy < 0) dy1 = -1;
-	else dy1 = 0;
+    if (sy > 0) dy1 = 1;
+    else if (sy < 0) dy1 = -1;
+    else dy1 = 0;
 
-	m = abs(sx);
-	n = abs(sy);
-	dx2 = dx1;
-	dy2 = 0;
+    m = abs(sx);
+    n = abs(sy);
+    dx2 = dx1;
+    dy2 = 0;
 
-	if (m < n) {
-		m = abs(sy);
-		n = abs(sx);
-		dx2 = 0;
-		dy2 = dy1;
-	}
+    if (m < n) {
+        m = abs(sy);
+        n = abs(sx);
+        dx2 = 0;
+        dy2 = dy1;
+    }
 
-	x = x1; y = y1;
-	cnt = m + 1;
-	k = n / 2;
+    x = x1; y = y1;
+    cnt = m + 1;
+    k = n / 2;
 
-	while (cnt--) {
-		if ((y >= 0) && (y < res[1])) {
-		if (x < contour_x[y][0]) contour_x[y][0] = x;
-		if (x > contour_x[y][1]) contour_x[y][1] = x;
-		}
+    while (cnt--) {
+        if ((y >= 0) && (y < res[1])) {
+            if (x < contour_x[y][0]) contour_x[y][0] = x;
+            if (x > contour_x[y][1]) contour_x[y][1] = x;
+        }
 
-		k += n;
-		if (k < m) {
-			x += dx2;
-			y += dy2;
-		}
-		else {
-			k -= m;
-			x += dx1;
-			y += dy1;
-		}
-	}
+        k += n;
+        if (k < m) {
+            x += dx2;
+            y += dy2;
+        }
+        else {
+            k -= m;
+            x += dx1;
+            y += dy1;
+        }
+    }
 }
 
 void render_hori_line(SDL_Renderer* renderer, int x1, int x2, int y) {
