@@ -9,13 +9,14 @@ struct Bitmap* bitmap_create(int res[]) {
 }
 
 struct Pixel* bitmap_get_pixel(struct Bitmap* bitmap, size_t x, size_t y) {
-    return bitmap->pixels + bitmap->width * (bitmap->height-y)+ x;
+    return bitmap->pixels + bitmap->width*y + x;
 }
 
-void bitmap_set_pixel(struct Bitmap* bitmap, size_t x, size_t y, uint8_t col[]) {
-    bitmap_get_pixel(bitmap, x, bitmap->height-y-1)->red = col[0];
-    bitmap_get_pixel(bitmap, x, bitmap->height-y-1)->green = col[1];
-    bitmap_get_pixel(bitmap, x, bitmap->height-y-1)->blue = col[2];
+void bitmap_set_pixel(struct Bitmap* bitmap, size_t x, size_t y, uint8_t color[]) {
+    struct Pixel* pixel = bitmap_get_pixel(bitmap, x, bitmap->height-y-1);
+    pixel->red = color[0];
+    pixel->green = color[1];
+    pixel->blue = color[2];
 }
 
 bool bitmap_save_png(struct Bitmap *bitmap, char* png_file_path) {
@@ -27,7 +28,13 @@ bool bitmap_save_png(struct Bitmap *bitmap, char* png_file_path) {
     f_png = fopen(png_file_path, "wb");
     png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
     info_ptr = png_create_info_struct(png_ptr);
-    
+
+    if (!png_ptr) {
+        fprintf(stderr, "'png_create_write_struct' failed!\n");
+    }
+    if (!info_ptr) {
+        fprintf(stderr, "'png_create_info_struct' failed!\n");
+    }
     if (f_png == NULL) {
         fprintf(stderr, "Failed to open file '%s' for output.\n", png_file_path);
         return false;
