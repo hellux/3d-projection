@@ -167,12 +167,6 @@ void render_hori_line(SDL_Renderer* renderer, int x1, int x2, int y) {
     SDL_Rect r;
     r.x = x1+1; r.w = x2-x1-1;
     r.y = y;  r.h = 1;
-    uint8_t R, g, b, a;
-    SDL_GetRenderDrawColor(renderer, &R, &g, &b, &a);
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderDrawPoint(renderer, x1, y);
-    SDL_RenderDrawPoint(renderer, x2, y);
-    SDL_SetRenderDrawColor(renderer, R, g, b, a);
     SDL_RenderFillRect(renderer, &r);
 }
 
