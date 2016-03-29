@@ -53,30 +53,6 @@ void vector_copy(double u[], double v[]) {
     for (int i = 0; i < 3; i++) v[i] = u[i];
 }
 
-
-bool normal_faces_point(double N[], double P[], double S[]) {
-    /* determine if the normal N is pointing towards the side where the point S lies
-     *
-     *       A  .____  D
-     *         /|\   ----___. S
-     *          |         _/
-     *        N |       _/
-     * ---------P-----_/--------
-     *      N_n |   _/ D_n
-     *          | _/
-     *         \!/
-     *         A_n
-     *
-     * return |D| < |D_inv| */
-
-    double A[3], A_n[3], magD, magD_n;
-    vector_add(P, N, A);
-    vector_subtract(P, N, A_n);         /* A_n = P - N */
-    magD = points_distance(A, S);       /* |D|: distance between A, S */
-    magD_n = points_distance(A_n, S);   /* |D_n|: distance between A_n, S */
-    return magD < magD_n;               /* |D| < |D_n| */
-}
-
 void vector_transform(double matrix[][3], double u[]) {
     double mat_u[][1] = {{u[0]},
                          {u[1]},
