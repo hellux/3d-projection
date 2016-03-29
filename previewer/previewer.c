@@ -171,17 +171,17 @@ int handle_args(int argc, char* args[], char** config_path, char** output_path) 
             case 'h':
                 printf("Usage: preview [options..]\n\n"
     "Options:\n"
-    "-c <config_path>    specify input config file [default: render.cfg]\n"
-    "-o <output_path>    specify output config file [default: render.cfg]\n"
-    "-h                  print this help screen\n\n"
+    "\t-c <config_path>    specify input config file [default: render.cfg]\n"
+    "\þ-o <output_path>    specify output config file [default: render.cfg]\n"
+    "\t-h                  print this help screen\n\n"
     "Controls:\n"
-    "W, A, S, D          accelerate camera forward, left, backward or right\n"
-    "<space>, <lctrl>    accelerate camera upward or downward\n"
-    "R, F                decrease or increase field of view\n"
-    "X                   stop camera\n"
-    "<tab>               toggle between rendering vertices and surfaces\n"
-    "<enter>             save current settings to output config file\n"
-    "F11                 toggle between windowed and fullscreen mode\n"
+    "\tW, A, S, D          accelerate camera forward, left, backward or right\n"
+    "\t<space>, <lctrl>    accelerate camera upward or downward\n"
+    "\tR, F                decrease or increase field of view\n"
+    "\tX                   stop camera\n"
+    "\t<tab>               toggle between rendering vertices and surfaces\n"
+    "\t<enter>             save current settings to output config file\n"
+    "\tF11                 toggle between windowed and fullscreen mode\n"
     );
                 return EXIT_SUCCESS;
                 break;
