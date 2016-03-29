@@ -172,7 +172,7 @@ int handle_args(int argc, char* args[], char** config_path, char** output_path) 
                 printf("Usage: preview [options..]\n\n"
     "Options:\n"
     "\t-c <config_path>    specify input config file [default: render.cfg]\n"
-    "\þ-o <output_path>    specify output config file [default: render.cfg]\n"
+    "\t-o <output_path>    specify output config file [default: render.cfg]\n"
     "\t-h                  print this help screen\n\n"
     "Controls:\n"
     "\tW, A, S, D          accelerate camera forward, left, backward or right\n"
