@@ -7,9 +7,9 @@ Experiment to render 3D objects onto a 2D surface. Previewer and renderer writte
 Usage: preview [options..]
 
 Options:
-    -c <config_path>    specify input config file [default: render.cfg].
-    -o <output_path>    specify output config file [default: render.cfg].
-    -h                  show this help screen.
+    -c <config_path>    specify input config file [default: render.cfg]
+    -o <output_path>    specify output config file [default: render.cfg]
+    -h                  show this help screen
 
 Controls:
     W, A, S, D          accelerate camera forward, left, backward or right
@@ -27,7 +27,7 @@ Controls:
 Usage: render [options..]
 
 Options:
-    -c <config_path>    specify config file [default: render.cfg].
-    -o <output_path>    specify output image file [default: render.png].
-    -h                  show this help screen.
+    -c <config_path>    specify config file [default: render.cfg]
+    -o <output_path>    specify output image file [default: render.png]
+    -h                  show this help screen
 ```
