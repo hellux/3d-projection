@@ -8,7 +8,7 @@ void matrix_product(size_t rows_A, size_t cols_A, double A[][cols_A],
      * C = A*B */
     
     if (cols_A != rows_B) {
-        fprintf(stderr, "Matrices can't multiply!\n");
+        fprintf(stderr, "matrix - matrices can't multiply!\n");
         return;
     }
     for (int i = 0; i < rows_A; i++) {
@@ -55,7 +55,7 @@ void matrix_inverse_2x2(double A[][2], double B[][2]) {
         matrix_scalar(1/determinant_A, 2, 2, C, B);
     } 
     else {
-        fprintf(stderr, "renderer: inverse of 2x2 matrix does not exist\n");
+        fprintf(stderr, "matrix: inverse of 2x2 matrix does not exist\n");
     }
 }
 
@@ -111,7 +111,7 @@ void matrix_inverse_3x3(double A[][3], double B[][3]) {
         matrix_scalar(1/determinant_A, 3, 3, CT, B);
     }
     else {
-        fprintf(stderr, "renderer: inverse of 3x3 matrix does not exist\n");
+        fprintf(stderr, "matrix: inverse of 3x3 matrix does not exist\n");
         matrix_print(3, 3, A);
     }
 }

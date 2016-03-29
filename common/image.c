@@ -30,13 +30,13 @@ bool bitmap_save_png(struct Bitmap *bitmap, char* png_file_path) {
     info_ptr = png_create_info_struct(png_ptr);
 
     if (!png_ptr) {
-        fprintf(stderr, "'png_create_write_struct' failed!\n");
+        fprintf(stderr, "image: 'png_create_write_struct' failed!\n");
     }
     if (!info_ptr) {
-        fprintf(stderr, "'png_create_info_struct' failed!\n");
+        fprintf(stderr, "image: 'png_create_info_struct' failed!\n");
     }
     if (f_png == NULL) {
-        fprintf(stderr, "Failed to open file '%s' for output.\n", png_file_path);
+        fprintf(stderr, "image: failed to open file '%s' for output.\n", png_file_path);
         return false;
     }
     
@@ -68,7 +68,7 @@ bool bitmap_save_png(struct Bitmap *bitmap, char* png_file_path) {
     png_set_rows(png_ptr, info_ptr, row_pointers);
     png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
 
-    printf("Bitmap written to '%s'.\n", png_file_path);
+    printf("image: bitmap written to '%s'.\n", png_file_path);
 
     for (y = 0; y < bitmap->height; y++) {
         png_free(png_ptr, row_pointers[y]);
