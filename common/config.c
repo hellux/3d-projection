@@ -1,6 +1,8 @@
 #include "config.h"
 
-bool config_parse(const char* cfg_path, struct World* world, struct Camera* camera) {
+bool config_parse(const char* cfg_path,
+                  struct World* world,
+                  struct Camera* camera) {
     config_t cfg;
     config_init(&cfg);
 
@@ -12,23 +14,26 @@ bool config_parse(const char* cfg_path, struct World* world, struct Camera* came
         return false;
     }
 
+    /* the camera and at least one object was loaded successfully */
     bool valid_config = (config_read_camera(cfg, camera) &&
                          config_read_objects(cfg, world));
-    if (valid_config) {
+    config_destroy(&cfg);
+
+    if (valid_config) { /* set triangle colors */
         for (int o = 0; o < world->object_count; o++) {
             for (int t = 0; t < world->objects[o].tric; t++) {
                 triangle_set_color(&world->objects[o].tris[t], camera->light);
             }   
         } 
+        printf("Objects: %d\n", world->object_count);
+        printf("Triangles: %d\n", world->triangle_count);
+        printf("Resolution: %dx%d\n", camera->res[0], camera->res[1]);
+        return true;
     }
-    config_destroy(&cfg);
-
-    printf("Objects: %d\n", world->object_count);
-    printf("Triangles: %d\n", world->triangle_count);
-    printf("Resolution: %dx%d\n", camera->res[0], camera->res[1]);
-
-    /* return if the camera and at least one object was loaded successfully */
-    return valid_config;
+    else {
+        fprintf(stderr, "config: failed to load camera or at least one object\n");
+        return false;
+    }
 }
 
 bool config_read_camera(config_t cfg, struct Camera* camera) {
