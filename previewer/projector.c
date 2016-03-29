@@ -165,13 +165,18 @@ void triangle_scan_line(int x1, int y1,
 
 void render_hori_line(SDL_Renderer* renderer, int x1, int x2, int y) {
     SDL_Rect r;
-    r.x = x1; r.w = x2-x1;
+    r.x = x1+1; r.w = x2-x1-1;
     r.y = y;  r.h = 1;
+    uint8_t R, g, b, a;
+    SDL_GetRenderDrawColor(renderer, &R, &g, &b, &a);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderDrawPoint(renderer, x1, y);
+    SDL_RenderDrawPoint(renderer, x2, y);
+    SDL_SetRenderDrawColor(renderer, R, g, b, a);
     SDL_RenderFillRect(renderer, &r);
 }
 
 void transform_point(struct Camera* C, double P[], double point_2d[]) {
-
     double D[3];
     vector_subtract(P, C->pos, D);
     vector_transform(C->rotation_matrix_inv, D);
@@ -180,21 +185,4 @@ void transform_point(struct Camera* C, double P[], double point_2d[]) {
             C->focal_length;
     point_2d[1] = C->res[1] / 2 - (D[1]*C->res[1]) / (D[2]*C->array_height) *
             C->focal_length;
-
-    /*
-    double X = P[0] - C->pos[0];
-    double Y = P[1] - C->pos[1];
-    double Z = P[2] - C->pos[2];
-
-    double dx = C->frame_cos[1] * X - C->frame_sin[1] * Z;
-    double dy = C->frame_sin[0] *
-               (C->frame_cos[1] * Z + C->frame_sin[1] * X) + C->frame_cos[0] * Y;
-    double dz = C->frame_cos[0] *
-               (C->frame_cos[1] * Z + C->frame_sin[1] * X) - C->frame_sin[0] * Y;
-
-    point_2d[0] = (C->res[0] / 2 + (dx*C->res[0]) / (dz*C->array_width) *
-            C->focal_length);
-    point_2d[1] = (C->res[1] / 2 - (dy*C->res[1]) / (dz*C->array_height) *
-            C->focal_length);
-   */
 }
