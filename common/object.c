@@ -43,11 +43,12 @@ bool object_parse(struct Object* O, const char* file_path, int indices[][3]) {
                               &O->tric, indices);
         }
         fclose(f);
-        printf("%d vertices and %d triangles loaded from '%s'.\n",
+        printf("object: %d vertices and %d triangles loaded from '%s'.\n",
                O->vertc, O->tric, file_path);
     }
     else { 
-        fprintf(stderr, "renderer: file at '%s' could not be loaded\n", file_path);
+        fprintf(stderr, "object: file at '%s' could not be loaded\n", file_path);
+        free(line_buffer);
         return false;
     }
     free(line_buffer);
