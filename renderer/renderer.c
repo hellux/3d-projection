@@ -31,9 +31,9 @@ int handle_args(int argc, char* args[], char** config_path, char** output_path) 
             case 'h':
                 printf("Usage: render [options..]\n"
     "Options:\n"
-    "-c <config_path>    specify input config file [default: render.cfg].\n"
-    "-o <output_path>    specify output config file [default: render.cfg].\n"
-    "-h                  print this help screen.\n");
+    "-c <config_path>    specify input config file [default: render.cfg]\n"
+    "-o <output_path>    specify output config file [default: render.cfg]\n"
+    "-h                  print this help screen\n");
                 return EXIT_SUCCESS;
                 break;
             default:
