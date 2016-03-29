@@ -5,15 +5,27 @@ Experiment to render 3D objects onto a 2D surface. Previewer and renderer writte
 #### Previewer
 ```
 Usage: preview [options..]
+
 Options:
     -c <config_path>    specify input config file [default: render.cfg].
     -o <output_path>    specify output config file [default: render.cfg].
     -h                  show this help screen.
+
+Controls:
+    W, A, S, D          accelerate camera forward, left, backward or right
+    <space>, <lctrl>    accelerate camera upward or downward
+    R, F                decrease or increase field of view
+    X                   stop camera
+    <tab>               toggle between rendering vertices and surfaces
+    <enter>             save current settings to output config file
+    F11                 toggle between windowed and fullscreen mode
+
 ```
 
 #### Renderer
 ```
 Usage: render [options..]
+
 Options:
     -c <config_path>    specify config file [default: render.cfg].
     -o <output_path>    specify output image file [default: render.png].
