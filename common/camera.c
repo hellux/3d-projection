@@ -213,14 +213,14 @@ void camera_move_down(struct Camera* C) {
 }
 void camera_move_horizontal(struct Camera* C, double d, double v ) {
     if (C->slow) d *= CAMERA_SLOW_MULTIPLIER;
-    camera_accelerate(C, 0, -d * sin(v));
-    camera_accelerate(C, 2, -d * cos(v));
+    camera_accelerate_axis(C, 0, -d * sin(v));
+    camera_accelerate_axis(C, 2, -d * cos(v));
 }
 void camera_move_vertical(struct Camera* C, double d ) {
     if (C->slow) d *= CAMERA_SLOW_MULTIPLIER;
-    camera_accelerate(C, 1, d);
+    camera_accelerate_axis(C, 1, d);
 }
-void camera_accelerate(struct Camera* C, int i, double a) { C->vel[i] += a; }
+void camera_accelerate_axis(struct Camera* C, int i, double a) { C->vel[i] += a; }
 
 void camera_rotate(struct Camera* C, int x, int y) {
     C->rot[0] = fmod(C->rot[0] + y*MOUSE_SENSITIVITY, M_PI*2);

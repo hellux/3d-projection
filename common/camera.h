@@ -65,7 +65,7 @@ void camera_move_up(struct Camera* C);
 void camera_move_down(struct Camera* C);
 void camera_move_horizontal(struct Camera* C, double d, double v );
 void camera_move_vertical(struct Camera* C, double d );
-void camera_accelerate(struct Camera* C, int i, double a);
+void camera_accelerate_axis(struct Camera* C, int i, double a);
 void camera_rotate(struct Camera* C, int u, int v);
 void camera_frame_update(struct Camera* C, double period);
 void camera_update_rotation(struct Camera* C);
