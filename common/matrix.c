@@ -31,6 +31,15 @@ void matrix_scalar(double m,
             B[i][j] = m * A[i][j];
 }
 
+void matrix_transpose(size_t rows_A, size_t cols_A, double A[][cols_A],
+                                                    double T[][cols_A]) {
+    for (int i = 0; i < rows_A; i++) {
+        for (int j = 0; j < cols_A; j++) {
+            T[j][i] = A[i][j];
+        }
+    }
+}
+
 void matrix_inverse_2x2(double A[][2], double B[][2]) {
     /* B = A^-1, A must be a 2x2 matrix:
      * C is the cofactor adjugate of A
