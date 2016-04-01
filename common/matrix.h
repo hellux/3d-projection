@@ -11,6 +11,8 @@ void matrix_product(size_t rows_A, size_t cols_A, double A[][cols_A],
 void matrix_scalar(double m,
                    size_t rows_A, size_t cols_A, double A[][cols_A],
                                                  double B[][cols_A]);
+void matrix_transpose(size_t rows_A, size_t cols_A, double A[][cols_A],
+                                                    double T[][cols_A]);
 void matrix_inverse_2x2(double A[][2], double B[][2]);
 void matrix_inverse_3x3(double A[][3], double B[][3]);
 void matrix_rotation_x(double cos_c, double sin_c, double R[][3]);
