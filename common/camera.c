@@ -110,8 +110,8 @@ void camera_calc_rotation_matrix(struct Camera* C) {
     matrix_rotation_y(C->frame_cos[1], C->frame_sin[1], rot_y);
     matrix_rotation_z(C->frame_cos[2], C->frame_sin[2], rot_z);
 
-    /* combined rotation matrix
-     * R = Rz(c) * Ry(b) * Rx(a) */
+    /* combined rotation matrix (intrinsic rotation)
+     * R = Rz(a) * Ry(b) * Rx(c) */
     double rot_z_rot_y[3][3];
     matrix_product(3, 3, rot_z,
                    3, 3, rot_y,
@@ -119,7 +119,8 @@ void camera_calc_rotation_matrix(struct Camera* C) {
     matrix_product(3, 3, rot_z_rot_y,
                    3, 3, rot_x,
                    C->rotation_matrix);
-    matrix_inverse_3x3(C->rotation_matrix, C->rotation_matrix_inv);
+    matrix_transpose(3, 3, C->rotation_matrix,
+                           C->rotation_matrix_inv);
 }
 
 void camera_calc_pixel_direction(struct Camera C, int row, int col, double V[]) {
@@ -199,11 +200,11 @@ void camera_move_back(struct Camera* C) {
     vector_multiply(CAMERA_SPEED, C->direction, acceleration);
     vector_subtract(C->vel, acceleration, C->vel);
 }
-void camera_move_right(struct Camera* C) { 
-    camera_move_horizontal(C, -CAMERA_SPEED, C->rot[1] + M_PI / 2);
+void camera_move_right(struct Camera* C) {
+    camera_move_horizontal(C, C->rot[1] + M_PI / 2);
 }
 void camera_move_left(struct Camera* C) {
-    camera_move_horizontal(C, CAMERA_SPEED, C->rot[1] + M_PI / 2);
+    camera_move_horizontal(C, C->rot[1] - M_PI / 2);
 }
 void camera_move_up(struct Camera* C) {
     camera_move_vertical(C, CAMERA_SPEED);
@@ -211,10 +212,20 @@ void camera_move_up(struct Camera* C) {
 void camera_move_down(struct Camera* C) {
     camera_move_vertical(C, -CAMERA_SPEED);
 }
-void camera_move_horizontal(struct Camera* C, double d, double v ) {
+void camera_move_horizontal(struct Camera* C, double v ) {
+    /* ^ z
+     * |  B /
+     * |  ^/ 
+     * |  / 
+     * o------->
+     *         x
+     * 0 rotation -> z axis direction
+     * dx = sinB
+     * dy = cosB */
+    double d = CAMERA_SPEED;
     if (C->slow) d *= CAMERA_SLOW_MULTIPLIER;
-    camera_accelerate_axis(C, 0, -d * sin(v));
-    camera_accelerate_axis(C, 2, -d * cos(v));
+    camera_accelerate_axis(C, 0, d * sin(v));
+    camera_accelerate_axis(C, 2, d * cos(v));
 }
 void camera_move_vertical(struct Camera* C, double d ) {
     if (C->slow) d *= CAMERA_SLOW_MULTIPLIER;
@@ -222,9 +233,13 @@ void camera_move_vertical(struct Camera* C, double d ) {
 }
 void camera_accelerate_axis(struct Camera* C, int i, double a) { C->vel[i] += a; }
 
-void camera_rotate(struct Camera* C, int x, int y) {
-    C->rot[0] = fmod(C->rot[0] + y*MOUSE_SENSITIVITY, M_PI*2);
-    C->rot[1] = fmod(C->rot[1] + x*MOUSE_SENSITIVITY, M_PI*2);
+void camera_rotate_z(struct Camera* C, int d) {
+    C->rot[2] = fmod(C->rot[2]+0.01*d, M_PI*2);
+}
+
+void camera_rotate(struct Camera* C, int dx, int dy) {
+    C->rot[0] = fmod(C->rot[0] + dy*MOUSE_SENSITIVITY, M_PI*2);
+    C->rot[1] = fmod(C->rot[1] + dx*MOUSE_SENSITIVITY, M_PI*2);
 }
 
 void camera_frame_update(struct Camera* C, double period) {
