@@ -117,6 +117,8 @@ void handle_controls(SDL_Window* window, struct Camera* camera) {
     if (key_states[SDL_SCANCODE_A]) { camera_move_left(camera); }
     if (key_states[SDL_SCANCODE_S]) { camera_move_back(camera); }
     if (key_states[SDL_SCANCODE_D]) { camera_move_right(camera); }
+    if (key_states[SDL_SCANCODE_Q]) { camera_rotate_z(camera, 1); }
+    if (key_states[SDL_SCANCODE_E]) { camera_rotate_z(camera, -1); }
     if (key_states[SDL_SCANCODE_SPACE]) { camera_move_up(camera); }
     if (key_states[SDL_SCANCODE_LCTRL]) { camera_move_down(camera); }
     if (key_states[SDL_SCANCODE_R]) { camera_decrease_fov(camera); }
