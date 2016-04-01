@@ -8,10 +8,10 @@
 
 #include "triangle.h"
 
-#define MAX_VERTICES 200000
-#define MAX_TRIANGLES 100000
+#define MAX_VERTICES 500000
+#define MAX_TRIANGLES 500000
 
-#define OBJ_LINE_BUFFER_SIZE 128
+#define OBJ_LINE_BUFFER_SIZE 256
 
 struct Object {
     struct Triangle* tris;
