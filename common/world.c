@@ -9,28 +9,25 @@ struct World* world_create() {
 
 void world_allocate_memory_objects(struct World* W) {
     W->objects_buffer = WORLD_OBJECTS_START_BUFFER;
-    W->objects = (struct Object*)calloc(sizeof(struct Object),
-                                        W->objects_buffer);
+    W->objects = calloc(sizeof(struct Object), W->objects_buffer);
     W->object_count = 0;
 }
 
 void world_reallocate_memory_objects(struct World* W) {
     W->objects_buffer += WORLD_OBJECTS_START_BUFFER;
-    W->objects = (struct Object*)realloc(W->objects,
-                                 sizeof(struct Object)*W->objects_buffer);
+    W->objects = realloc(W->objects, sizeof(struct Object)*W->objects_buffer);
 }
 
 void world_allocate_memory_triangles(struct World* W) {
     W->triangles_buffer = WORLD_TRIANGLES_START_BUFFER;
-    W->triangles = (struct Triangle**)calloc(sizeof(struct Triangle*),
-                                             W->triangles_buffer);
+    W->triangles = calloc(sizeof(struct Triangle*), W->triangles_buffer);
     W->triangle_count = 0;
 }
 
 void world_reallocate_memory_triangles(struct World* W) {
     W->triangles_buffer += WORLD_TRIANGLES_START_BUFFER;
-    W->triangles = (struct Triangle**)realloc(W->triangles,
-                      sizeof(struct Triangle*)*W->triangles_buffer);
+    W->triangles = realloc(W->triangles, 
+                           sizeof(struct Triangle*)*W->triangles_buffer);
 }
 
 bool world_add_object(struct World* W,

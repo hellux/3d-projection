@@ -17,42 +17,39 @@ bool object_create(const char* obj_file_path,
 
 void object_allocate_memory_triangles(struct Object* O) {
     O->tris_buffer = OBJECT_TRIANGLES_START_BUFFER;
-    O->tris = (struct Triangle*)calloc(sizeof(struct Triangle),
-                                       O->tris_buffer);
+    O->tris = calloc(sizeof(struct Triangle), O->tris_buffer);
     O->tric = 0;
 }
 
 void object_reallocate_memory_triangles(struct Object* O) {
     O->tris_buffer += OBJECT_TRIANGLES_START_BUFFER;
-    O->tris = (struct Triangle*)realloc(O->tris,
-                                sizeof(struct Triangle)*O->tris_buffer);
+    O->tris = realloc(O->tris, sizeof(struct Triangle)*O->tris_buffer);
 }
 
 void object_allocate_memory_vertices(struct Object* O) {
     O->verts_buffer = OBJECT_VERTICES_START_BUFFER;
-    O->verts = (double**)calloc(sizeof(double*),
-                                O->verts_buffer);
+    O->verts = calloc(sizeof(double*), O->verts_buffer);
     for (int i = 0; i < O->verts_buffer; i++)
-        O->verts[i] = (double*)calloc(sizeof(double), 3);
+        O->verts[i] = calloc(sizeof(double), 3);
     O->vertc = 0;
 }
 
 void object_reallocate_memory_vertices(struct Object* O) {
     int old_buffer = O->verts_buffer;
     O->verts_buffer += OBJECT_VERTICES_START_BUFFER;
-    O->verts = (double**)realloc(O->verts, sizeof(double*)*O->verts_buffer);
+    O->verts = realloc(O->verts, sizeof(double*)*O->verts_buffer);
     for (int i = old_buffer; i < O->verts_buffer; i++)
-        O->verts[i] = (double*)calloc(sizeof(double), 3);
+        O->verts[i] = calloc(sizeof(double), 3);
 }
 
 void object_allocate_memory_verts_in_front(struct Object* O) {
-    O->verts_in_front = (bool*)calloc(sizeof(bool), O->vertc);
+    O->verts_in_front = calloc(sizeof(bool), O->vertc);
 }
 
 void object_allocate_memory_verts_2d(struct Object* O) {
-    O->verts_2d = (double**)calloc(sizeof(double*), O->vertc);
+    O->verts_2d = calloc(sizeof(double*), O->vertc);
     for (int i = 0; i < O->vertc; i++) 
-        O->verts_2d[i] = (double*)calloc(sizeof(double), 2);
+        O->verts_2d[i] = calloc(sizeof(double), 2);
 }
 
 void object_set_color(struct Object* O, uint8_t color[]) {
