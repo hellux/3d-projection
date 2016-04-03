@@ -28,12 +28,12 @@ struct Triangle {
     struct Object* object;
 };
 
-void triangle_create(double vertices[][3],
+void triangle_create(double** vertices,
                      int indices[],
                      struct Object* O,
                      struct Triangle* T);
 void triangle_set_color(struct Triangle* T, double light[]);
-void triangle_set_vertices(struct Triangle* T, double vertices[][3], int indices[]);
+void triangle_set_vertices(struct Triangle* T, double** vertices, int indices[]);
 void triangle_calc_center(struct Triangle* T);
 void triangle_calc_vectors(struct Triangle* T);
 void triangle_calc_barycentric(struct Triangle* T);

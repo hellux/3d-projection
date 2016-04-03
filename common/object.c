@@ -5,12 +5,53 @@ bool object_create(const char* obj_file_path,
                    uint8_t color[],
                    struct Object* O) {
     object_set_color(O, color);
-    int indices[MAX_TRIANGLES][3];
-    if (!object_parse(O, obj_file_path, indices)) return false;
+    object_allocate_memory_triangles(O);
+    object_allocate_memory_vertices(O);
+    if (!object_parse(O, obj_file_path)) return false;
+    object_allocate_memory_verts_in_front(O);
+    object_allocate_memory_verts_2d(O);
     object_adjust_position(O, pos);
-    object_create_triangles(O, indices);
-
+    
     return true;
+}
+
+void object_allocate_memory_triangles(struct Object* O) {
+    O->tris_buffer = OBJECT_TRIANGLES_START_BUFFER;
+    O->tris = (struct Triangle*)calloc(sizeof(struct Triangle),
+                                       O->tris_buffer);
+    O->tric = 0;
+}
+
+void object_reallocate_memory_triangles(struct Object* O) {
+    O->tris_buffer += OBJECT_TRIANGLES_START_BUFFER;
+    O->tris = (struct Triangle*)realloc(O->tris,
+                                sizeof(struct Triangle)*O->tris_buffer);
+}
+
+void object_allocate_memory_vertices(struct Object* O) {
+    O->verts_buffer = OBJECT_VERTICES_START_BUFFER;
+    O->verts = (double**)calloc(sizeof(double*),
+                                O->verts_buffer);
+    for (int i = 0; i < O->verts_buffer; i++)
+        O->verts[i] = (double*)calloc(sizeof(double), 3);
+}
+
+void object_reallocate_memory_vertices(struct Object* O) {
+    int old_buffer = O->verts_buffer;
+    O->verts_buffer += OBJECT_VERTICES_START_BUFFER;
+    O->verts = (double**)realloc(O->verts, sizeof(double*)*O->verts_buffer);
+    for (int i = old_buffer; i < O->verts_buffer; i++)
+        O->verts[i] = (double*)calloc(sizeof(double), 3);
+}
+
+void object_allocate_memory_verts_in_front(struct Object* O) {
+    O->verts_in_front = (bool*)calloc(sizeof(bool), O->vertc);
+}
+
+void object_allocate_memory_verts_2d(struct Object* O) {
+    O->verts_2d = (double**)calloc(sizeof(double*), O->vertc);
+    for (int i = 0; i < O->vertc; i++) 
+        O->verts_2d[i] = (double*)calloc(sizeof(double), 2);
 }
 
 void object_set_color(struct Object* O, uint8_t color[]) {
@@ -25,7 +66,7 @@ void object_adjust_position(struct Object* O, double pos[]) {
             O->verts[i][j] += pos[j];
 }
 
-bool object_parse(struct Object* O, const char* file_path, int indices[][3]) {
+bool object_parse(struct Object* O, const char* file_path) {
     int c, p;
     char* line_buffer = (char*)malloc(OBJ_LINE_BUFFER_SIZE);
     FILE* f = fopen(file_path, "r");
@@ -38,9 +79,7 @@ bool object_parse(struct Object* O, const char* file_path, int indices[][3]) {
             } while (c != EOF && c != '\n');
             if (c == EOF) break;
             line_buffer[p] = 0;
-            object_parse_line(line_buffer,
-                              &O->vertc, O->verts,
-                              &O->tric, indices);
+            object_parse_line(line_buffer, O);
         }
         fclose(f);
         printf("object: %d vertices and %d triangles loaded from '%s'.\n",
@@ -55,9 +94,7 @@ bool object_parse(struct Object* O, const char* file_path, int indices[][3]) {
     return (O->vertc > 0 && O->tric > 0);
 }
 
-void object_parse_line(char* line,
-                       int* vertexc, double vertices[][3],
-                       int* indexc, int indices[][3]) {
+void object_parse_line(char* line, struct Object* O) {
     /* face must be a triangle
      * use strtok to tokenize / segment line
      * strtok modifies original string
@@ -73,28 +110,35 @@ void object_parse_line(char* line,
     for (int i = 0; i < 3; i++) tokens[i] = strtok(NULL, " ");
     if (token_start[1] == 0) {
         if (token_start[0] == 'v') {
+            double vertex[3];
             for (int i = 0; i < 3; i++) {
                 /* atof converts string to float */
-                vertices[*vertexc][i] = atof(tokens[i]);
+                vertex[i] = atof(tokens[i]);
             }
-            *vertexc = *vertexc + 1;
+            object_add_vertex(O, vertex);
         }
         else if (token_start[0] == 'f') {
+            int indices[3];
             for (int i = 0; i < 3; i++) {
                 char* index_str = strtok(tokens[i], "/");
                 /* atoi() converts string to int */
-                indices[*indexc][i] = atoi(index_str) - 1;
+                indices[i] = atoi(index_str) - 1;
                 /* subtract 1 because index in obj-files starts with 1 while
                  * the index in arrays starts with 0 */
             }
-            *indexc = *indexc + 1;
+            object_create_triangle(O, indices);
         }
     }
 }
 
-void object_create_triangles(struct Object* O, int indices[][3]) {
-    O->tris = (struct Triangle*)malloc(sizeof(struct Triangle)*O->tric);
-    for (int i = 0; i < O->tric; i++) {
-        triangle_create(O->verts, indices[i], O, &O->tris[i]);
-    }
+void object_add_vertex(struct Object* O, double vertex[]) {
+    if (O->vertc == O->verts_buffer-1) object_reallocate_memory_vertices(O);
+    for (int i = 0; i < 3; i++)
+        O->verts[O->vertc][i] = vertex[i];
+    O->vertc++;
+}
+
+void object_create_triangle(struct Object* O, int indices[]) {
+    if (O->tric == O->tris_buffer-1) object_reallocate_memory_triangles(O);
+    triangle_create(O->verts, indices, O, &O->tris[O->tric++]);
 }

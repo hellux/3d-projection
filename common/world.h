@@ -7,8 +7,8 @@
 
 #include "object.h"
 
-#define OBJECTS_START_BUFFER 3
-#define TRIANGLES_START_BUFFER 500
+#define WORLD_OBJECTS_START_BUFFER 3
+#define WORLD_TRIANGLES_START_BUFFER 20000
 
 struct World {
     size_t object_count;
@@ -22,10 +22,12 @@ struct World {
 
 struct World* world_create();
 void world_allocate_memory_objects(struct World* W);
+void world_reallocate_memory_objects(struct World* W);
 void world_allocate_memory_triangles(struct World* W);
 bool world_add_object(struct World* W,
                       const char* obj_file_path,
                       double pos[],
                       uint8_t color[]);
+void world_add_triangles(struct World* W, struct Triangle* triangles);
 
 #endif
