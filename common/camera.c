@@ -37,7 +37,7 @@ bool camera_set_resolution(struct Camera* C, int res[]) {
     for (int i = 0; i < 2; i++) {
         if (res[i] > 0) C->res[i] = res[i];
         else {
-            fprintf(stderr, "previewer: invalid resolution -- %dx%d px\n",
+            fprintf(stderr, "camera: invalid resolution -- %dx%d px\n",
                     res[0], res[1]);
             return false;
         }
