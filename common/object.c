@@ -34,6 +34,7 @@ void object_allocate_memory_vertices(struct Object* O) {
                                 O->verts_buffer);
     for (int i = 0; i < O->verts_buffer; i++)
         O->verts[i] = (double*)calloc(sizeof(double), 3);
+    O->vertc = 0;
 }
 
 void object_reallocate_memory_vertices(struct Object* O) {
