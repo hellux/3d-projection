@@ -15,8 +15,6 @@
 #include "../common/matrix.h"
 #include "../common/image.h"
 
-#define OBJ_LINE_BUFFER_SIZE 128
-
 struct Bitmap* projector_render(struct World W, struct Camera C);
 void rotate_vertex_x(double vertex[], double point[], double ang);
 void rotate_vertex_y(double vertex[], double point[], double ang);
@@ -24,6 +22,7 @@ void calc_pixel_color(struct World W,
                       struct Camera C,
                       int row, int col,
                       uint8_t color[]);
+struct Triangle* find_closest_triangle(struct World W, double S[], double V[]);
 void calc_camera_vector(struct Camera C, int row, int col, double V[]);
 double calc_ray_triangle_collision(double S[], double V[], struct Triangle T);
 double calc_ray_plane_collision(double S[], double V[], struct Triangle T);

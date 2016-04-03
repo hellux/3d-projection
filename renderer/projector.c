@@ -20,30 +20,31 @@ struct Bitmap* projector_render(struct World W, struct Camera C) {
 void calc_pixel_color(struct World W,
                       struct Camera C,
                       int row, int col,
-                      uint8_t color[]) {
+                      uint8_t pixel_color[]) {
     double pixel_vector[3];
     camera_calc_pixel_direction(C, row, col, pixel_vector);
-    
-    uint8_t* surface_color;
+    struct Triangle* closest_triangle = 
+        find_closest_triangle(W, C.pos, pixel_vector);
+    if (closest_triangle ==  NULL)
+        for (int i = 0; i < 3; i++) pixel_color[i] = 0xFF;
+    else 
+        for (int i = 0; i < 3; i++) pixel_color[i] = closest_triangle->color[i];
+}
+
+struct Triangle* find_closest_triangle(struct World W, double S[], double V[]) {
+    struct Triangle* closest_triangle = NULL;
     double depth = 0;
-    /* calc closest surface */
     for (int ob = 0; ob < W.object_count; ob++) {
         for (int tr = 0; tr < W.objects[ob].tric; tr++) {
-            double t = calc_ray_triangle_collision(C.pos,
-                                                   pixel_vector,
+            double t = calc_ray_triangle_collision(S, V,
                                                    W.objects[ob].tris[tr]);
             if (t > 0 && (t < depth || depth == 0)) {
-                surface_color = W.objects[ob].tris[tr].color;
+                closest_triangle = &W.objects[ob].tris[tr];
                 depth = t;
             }
         }
     }
-    if (depth == 0) {
-        for (int i = 0; i < 3; i++) color[i] = 0xFF;
-    }
-    else {
-        for (int i = 0; i < 3; i++) color[i] = surface_color[i];
-    }
+    return closest_triangle;
 }
 
 double calc_ray_triangle_collision(double S[], double V[], struct Triangle T) {
