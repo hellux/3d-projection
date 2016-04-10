@@ -1,6 +1,6 @@
 #include "color.h"
 
-void rgb_to_hsl(uint8_t rgb[], uint8_t hsl[]) {
+void rgb_to_hsl(uint8_t rgb[], double hsl[]) {
 	double R = rgb[0] / 255.0;
 	double G = rgb[1] / 255.0;
 	double B = rgb[2] / 255.0;
@@ -10,7 +10,7 @@ void rgb_to_hsl(uint8_t rgb[], uint8_t hsl[]) {
 	double c_max = MAX(MAX(R, G), B);
 	double c_d = c_max - c_min;
 
-	L = (c_max-c_min)/2;
+	L = (c_max+c_min)/2;
 
 	if (c_d == 0) {
 	   H = 0;
@@ -28,17 +28,17 @@ void rgb_to_hsl(uint8_t rgb[], uint8_t hsl[]) {
 		if (H>1) H -= 1;
 	}
 
-	hsl[0] = H*0xFF;
-	hsl[1] = S*0xFF;
-	hsl[2] = L*0xFF;	
+	hsl[0] = H;
+	hsl[1] = S;
+	hsl[2] = L;	
 }
 
-void hsl_to_rgb(uint8_t hsl[], uint8_t rgb[]) {
+void hsl_to_rgb(double hsl[], uint8_t rgb[]) {
 	double v;
 	double r, g, b;
-	double H = hsl[0] / 255.0;
-	double S = hsl[1] / 255.0;
-	double L = hsl[2] / 255.0;
+	double H = hsl[0];
+	double S = hsl[1];
+	double L = hsl[2];
 
 	r = g = b = L;
 	v = (L <= 0.5) ? L+L*S : L+S-L*S;
