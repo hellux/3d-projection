@@ -13,11 +13,11 @@ void triangle_create(double** vertices,
 }
 
 void triangle_set_color(struct Triangle* T, double light[]) {
-    double intensity = dot_product(T->normal, light) /
-                (magnitude(T->normal)*magnitude(light));
-    uint8_t hsl[3];
-    rgb_to_hsl(T->object->color, hsl);
-    hsl[2] = fabs(intensity) * 0xFF;
+    double intensity = fabs(dot_product(T->normal, light) /
+                (magnitude(T->normal)*magnitude(light)));
+    double hsl[3];
+    vector_copy(T->object->color_hsl, hsl);
+    hsl[2] = (hsl[2]+intensity) / 3.0;
     hsl_to_rgb(hsl, T->color);
 }
 

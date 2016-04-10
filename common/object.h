@@ -14,14 +14,17 @@
 
 struct Object {
     struct Triangle* tris;
-    int tris_buffer;
-    int tric;
+    size_t tris_buffer;
+    size_t tric;
+
     double** verts;
-    int verts_buffer;
-    int vertc;
-    bool* verts_in_front;
     double** verts_2d;
+    bool* verts_in_front;
+    size_t verts_buffer;
+    size_t vertc;
+
     uint8_t color[3];
+    double color_hsl[3];
 };
 
 bool object_create(const char* obj_file_path,
