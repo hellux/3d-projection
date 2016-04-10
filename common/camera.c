@@ -10,7 +10,7 @@ struct Camera* camera_create(double pos[], double rot[], int res[],
     if (!camera_set_resolution(C, res)) success = false;
     if (!camera_set_focal_length(C, focal_length)) success = false;
     if (!camera_set_fov(C, fov)) success = false;
-    if (!camera_set_mode(C, VERTEX_RENDER)) success = false;
+    if (!camera_set_mode(C, SURFACE_RENDER)) success = false;
     camera_calc_array_size(C);
     camera_update_rotation(C);
 
