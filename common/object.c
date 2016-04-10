@@ -56,6 +56,7 @@ void object_set_color(struct Object* O, uint8_t color[]) {
     for (int i = 0; i < 3; i++) {
         O->color[i] = color[i];
     }
+    rgb_to_hsl(O->color, O->color_hsl);
 }
 
 void object_adjust_position(struct Object* O, double pos[]) {
