@@ -17,7 +17,7 @@ void triangle_set_color(struct Triangle* T, double light[]) {
                 (magnitude(T->normal)*magnitude(light)));
     double hsl[3];
     vector_copy(T->object->color_hsl, hsl);
-    hsl[2] = (hsl[2]+intensity) / 3.0;
+    hsl[2] = (hsl[2]+intensity+T->object->reflectiveness) / 3.0;
     hsl_to_rgb(hsl, T->color);
 }
 

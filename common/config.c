@@ -110,6 +110,7 @@ bool config_read_objects(config_t cfg, struct World* world) {
 
 bool config_read_object(config_setting_t* object, struct World* world) {
     const char* obj_file_path;
+    double rfl;
     double pos[3];
     uint8_t col[3];
 
@@ -131,8 +132,10 @@ bool config_read_object(config_setting_t* object, struct World* world) {
         }
     }
 
+    config_setting_lookup_float(object, "ref", &rfl);
+
     /* return if object was successfully added to world struct */
-    return world_add_object(world, obj_file_path, pos, col);
+    return world_add_object(world, obj_file_path, pos, col, rfl);
 }
 
 bool config_write_camera(const char* in_path,

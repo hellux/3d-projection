@@ -33,7 +33,8 @@ void world_reallocate_memory_triangles(struct World* W) {
 bool world_add_object(struct World* W,
                       const char* obj_file_path,
                       double pos[],
-                      uint8_t color[]) {
+                      uint8_t color[],
+                      double reflectiveness) {
     if (W->object_count == W->objects_buffer-1)
         world_reallocate_memory_objects(W);
     
@@ -41,6 +42,7 @@ bool world_add_object(struct World* W,
     bool success = object_create(obj_file_path,
                                  pos,
                                  color,
+                                 reflectiveness,
                                  object);
     if (success) world_add_triangles(W, object->tris);
     W->object_count++;

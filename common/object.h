@@ -25,11 +25,13 @@ struct Object {
 
     uint8_t color[3];
     double color_hsl[3];
+    double reflectiveness;
 };
 
 bool object_create(const char* obj_file_path,
                    double pos[],
                    uint8_t color[],
+                   double reflectiveness,
                    struct Object* O);
 void object_allocate_memory_triangles(struct Object* O);
 void object_reallocate_memory_triangles(struct Object* O);
@@ -38,6 +40,7 @@ void object_reallocate_memory_vertices(struct Object* O);
 void object_allocate_memory_verts_in_front(struct Object* O);
 void object_allocate_memory_verts_2d(struct Object* O);
 void object_set_color(struct Object* O, uint8_t color[]);
+bool object_set_reflectiveness(struct Object* O, double reflectiveness);
 void object_adjust_position(struct Object* O, double pos[]);
 bool object_parse(struct Object* O, const char* obj_file_path);
 void object_parse_line(char* line_buffer, struct Object* O);

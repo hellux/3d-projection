@@ -3,11 +3,13 @@
 bool object_create(const char* obj_file_path,
                    double pos[],
                    uint8_t color[],
+                   double reflectiveness,
                    struct Object* O) {
-    object_set_color(O, color);
+    if (!object_set_reflectiveness(O, reflectiveness)) return false;
     object_allocate_memory_triangles(O);
     object_allocate_memory_vertices(O);
     if (!object_parse(O, obj_file_path)) return false;
+    object_set_color(O, color);
     object_allocate_memory_verts_in_front(O);
     object_allocate_memory_verts_2d(O);
     object_adjust_position(O, pos);
@@ -57,6 +59,16 @@ void object_set_color(struct Object* O, uint8_t color[]) {
         O->color[i] = color[i];
     }
     rgb_to_hsl(O->color, O->color_hsl);
+}
+
+bool object_set_reflectiveness(struct Object* O, double refl) {
+    if (refl < 0 || refl > 1) {
+        printf("object: invalid reflectiveness -- %f (required: 0<=r<=1)\n",
+               refl);
+        return false;
+    }
+    O->reflectiveness = refl;
+    return true;
 }
 
 void object_adjust_position(struct Object* O, double pos[]) {

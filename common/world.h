@@ -27,7 +27,8 @@ void world_allocate_memory_triangles(struct World* W);
 bool world_add_object(struct World* W,
                       const char* obj_file_path,
                       double pos[],
-                      uint8_t color[]);
+                      uint8_t color[],
+                      double reflectiveness);
 void world_add_triangles(struct World* W, struct Triangle* triangles);
 
 #endif
