@@ -137,16 +137,6 @@ void render(SDL_Window* window,
     update_surface(renderer, window);
 }
 
-void draw_bitmap(SDL_Renderer* renderer, struct Bitmap* bitmap) {
-    for (int y = 0; y < bitmap->height; y++) {
-        for (int x = 0; x < bitmap->width; x++) {
-            struct Pixel* p = bitmap_get_pixel(bitmap, x, y);
-            SDL_SetRenderDrawColor(renderer, p->red, p->green, p->blue, 0xFF);
-            SDL_RenderDrawPoint(renderer, x, y);
-        }
-    }
-}
-
 void clear_render_screen(SDL_Renderer* renderer, uint8_t r, uint8_t g, uint8_t b) {
     SDL_SetRenderDrawColor(renderer, r, g, b, 0xFF);
     SDL_RenderClear(renderer);

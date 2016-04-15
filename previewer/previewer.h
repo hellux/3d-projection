@@ -34,7 +34,6 @@ void render(SDL_Window* window,
             struct World* world,
             struct Camera* camera,
             double fps);
-void draw_bitmap(SDL_Renderer* renderer, struct Bitmap* bitmap);
 void clear_render_screen(SDL_Renderer* renderer, uint8_t r, uint8_t g, uint8_t b);
 void update_surface(SDL_Renderer* renderer, SDL_Window* window);
 int handle_args(int argc, char* args[], char** config_path, char** output_path);
