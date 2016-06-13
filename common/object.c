@@ -93,7 +93,7 @@ bool object_parse(struct Object* O, const char* file_path) {
             object_parse_line(line_buffer, O);
         }
         fclose(f);
-        printf("object: %d vertices and %d triangles loaded from '%s'.\n",
+        printf("object: %lu vertices and %lu triangles loaded from '%s'.\n",
                O->vertc, O->tric, file_path);
     }
     else { 

@@ -25,8 +25,8 @@ bool config_parse(const char* cfg_path,
                 triangle_set_color(&world->objects[o].tris[t], camera->light);
             }   
         } 
-        printf("Objects: %d\n", world->object_count);
-        printf("Triangles: %d\n", world->triangle_count);
+        printf("Objects: %lu\n", world->object_count);
+        printf("Triangles: %lu\n", world->triangle_count);
         printf("Resolution: %dx%d\n", camera->res[0], camera->res[1]);
         return true;
     }
