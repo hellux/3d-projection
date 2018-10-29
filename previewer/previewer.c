@@ -227,7 +227,7 @@ SDL_Window* init_window(int resolution[]) {
 
 SDL_Renderer* init_renderer(SDL_Window* window, int resolution[]) {
     SDL_Renderer* renderer = SDL_CreateRenderer(window,
-                                                1,
+                                                -1,
                                                 SDL_RENDERER_ACCELERATED);
     SDL_Log("Renderer initialization %s. %s",
             (renderer == NULL ? "failed" : "succeeded"),
