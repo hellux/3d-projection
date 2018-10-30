@@ -22,12 +22,8 @@ void render_scene_vertex(SDL_Renderer* renderer, struct World* W, struct Camera*
 void render_scene_surface(SDL_Renderer* renderer, struct World* W, struct Camera* C);
 void render_vertex(SDL_Renderer* renderer, struct Camera* C, double vertex[]);
 void render_triangle(SDL_Renderer* renderer, struct Camera* C,  struct Triangle* T);
-void render_fill_triangle(SDL_Renderer* renderer, int res[],
+void render_fill_triangle(SDL_Renderer* renderer,
                      double v1[], double v2[], double v3[]);
-void triangle_scan_line(int x1, int y1,
-                        int x2, int y2,
-                        int** contour_x, int res[]);
-void render_hori_line(SDL_Renderer* renderer, int x1, int x2, int y);
 void transform_point(struct Camera* C, double P[], double point_2d[]);
 
 #endif
